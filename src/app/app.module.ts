@@ -5,9 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
 import { Config } from './utility/config';
+import { MapUtil } from './utility/maputil';
 
 import { User } from './model/User';
+import { Location } from './model/Location';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,7 +35,7 @@ import { MapComponent } from './map/map.component';
     LeafletModule.forRoot(),
     LeafletModule
   ],
-  providers: [Config, User],
+  providers: [Config, MapUtil, User, Location],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

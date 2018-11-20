@@ -32,10 +32,6 @@ export class AuthComponent implements OnInit {
     firebase.auth().onAuthStateChanged(function (authUser) {
       if (authUser) {
         if (authUser.emailVerified) {
-          self.user.uId = authUser.uid;
-          self.user.userName = authUser.displayName;
-          self.user.email = authUser.email;
-          self.localStorage.setItem('user', self.user).subscribe(() => { });
           self.router.navigate([self.config.URL_HOME]);
         } else {
           authUser.sendEmailVerification().then(function () {
@@ -86,6 +82,10 @@ export class AuthComponent implements OnInit {
 
         // Write to DB
         self.createUserCollection(self.user.email, self.user.userName);
+
+        // Setting user to local storage
+        self.user.uId = currentUser.uid;
+        self.localStorage.setItem('user', self.user).subscribe(() => { });
       })
       .catch(function (error) {
         self.snackBar.open(error.message, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
