@@ -28,30 +28,16 @@ export class AuthComponent implements OnInit {
     this.onAuthStateChanged(self);
   }
 
-  onAuthStateChanged(self) {
-    firebase.auth().onAuthStateChanged(function (authUser) {
-      if (authUser) {
-        if (authUser.emailVerified) {
-          self.router.navigate([self.config.URL_HOME]);
-        } else {
-          authUser.sendEmailVerification().then(function () {
-            self.page = 'verify';
-          }).catch(function (error) {
-            self.snackBar.open(error.message, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
-          });
-        }
-      } else {
-        self.localStorage.clear().subscribe(() => { });
-      }
-    });
-  }
-
   setSignInLayout() {
     this.page = 'login';
   }
 
   setRegisterLayout() {
     this.page = 'register';
+  }
+
+  setForgotPasswordLayout() {
+    this.page = 'forgot';
   }
 
   doRegister() {
@@ -109,7 +95,11 @@ export class AuthComponent implements OnInit {
       .then(function (res) {
         self.snackBar.dismiss();
         if (res.user.emailVerified) {
-          self.localStorage.setItem('uid', res.user.uid).subscribe(() => { });
+          self.user.uId = res.user.uid;
+          self.user.email = res.user.email;
+          self.user.userName = res.user.displayName;
+          self.user.password = '';
+          self.localStorage.setItem('user', self.user).subscribe(() => { });
           self.router.navigate([self.config.URL_HOME]);
         } else {
           self.page = 'verify';
@@ -120,10 +110,41 @@ export class AuthComponent implements OnInit {
       });
   }
 
+  doForgotPassword() {
+    const self = this;
+    this.snackBar.open('Getting your password', self.config.OK, { duration: self.config.SNACKBAR_EVER });
+    const auth = firebase.auth();
+    auth.sendPasswordResetEmail(this.user.email).then(function () {
+      self.page = 'mailforgot';
+      self.snackBar.dismiss();
+    }).catch(function (error) {
+      self.snackBar.open(error.message, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
+    });
+  }
+
   createUserCollection(email, userName) {
     firebase.database().ref('users/' + firebase.auth().currentUser.uid).set({
       username: userName,
       email: email
+    });
+  }
+
+  onAuthStateChanged(self) {
+    firebase.auth().onAuthStateChanged(function (authUser) {
+      if (authUser) {
+        if (authUser.emailVerified) {
+          self.router.navigate([self.config.URL_HOME]);
+        } else {
+          self.user.email = authUser.email;
+          authUser.sendEmailVerification().then(function () {
+            self.page = 'verify';
+          }).catch(function (error) {
+            self.snackBar.open(error.message, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
+          });
+        }
+      } else {
+        self.localStorage.clear().subscribe(() => { });
+      }
     });
   }
 }

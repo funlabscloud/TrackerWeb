@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import 'hammerjs';
 
 import { Config } from './utility/config';
 import { MapUtil } from './utility/maputil';

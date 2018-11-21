@@ -26,7 +26,6 @@ export class MapComponent implements OnInit {
   private markers = [];
   private sideBarOnly = 'sidebar-icon-only';
 
-
   constructor(protected localStorage: LocalStorage,
     private router: Router,
     private config: Config,
@@ -45,9 +44,10 @@ export class MapComponent implements OnInit {
   onSignout() {
     const self = this;
     firebase.auth().signOut().then(function () {
+      self.localStorage.clear().subscribe(() => { });
       self.router.navigate([self.config.URL_MAIN]);
     }, function (error) {
-
+      console.log(error);
     });
   }
 
@@ -63,50 +63,23 @@ export class MapComponent implements OnInit {
           transport.power = Math.round(transport.power);
           transport.time = moment(transport.time).fromNow();
 
-          let lat = '';
-          let lng = '';
+          const oldMarker = self.mapUtil.geo.clearMarker(id, self.markers, self.map);
+          const lat1 = oldMarker._latlng.lat;
+          const lng1 = oldMarker._latlng.lng;
 
-          for (let itr = 0; itr <= self.markers.length - 1; itr++) {
-            const mark = self.markers[itr];
-            if (id === mark.id) {
-              self.map.removeLayer(mark);
-              lat = mark._latlng.lat;
-              lng = mark._latlng.lng;
-              self.markers.splice(itr, 1);
-            }
-          }
+          const icon = self.mapUtil.geo.mapIcon('CAR');
 
-          const greenIcon = L.icon({
-            iconUrl: 'assets/img/car.svg',
-            iconSize: [40, 40]
-          });
-
-          if (lat === '' || lng === '') {
-            const tempMarker = L.marker([transport.lat, transport.lng],
-              { icon: greenIcon, rotationAngle: transport.bearing }).addTo(self.map)
-              .bindPopup('<div class="card"><div class="card-body"><div class="d-flex justify-content-center">' +
-                '<i class="mdi mdi-clock icon-lg text-primary d-flex align-items-center"></i>' +
-                '<div class="d-flex flex-column ml-4"><span class="d-flex flex-column"><p class="mb-0">Bounce rate</p>' +
-                '<h4 class="font-weight-bold">32.16%</h4></span><small class="text-muted">65.45% on average time</small>' +
-                '</div></div></div></div>');
-            tempMarker['id'] = id;
-            self.markers.push(tempMarker);
+          if (lat1 === '' || lng1 === '') {
+            const marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, transport.bearing, self.map, id, 'helo');
+            self.markers.push(marker);
           } else {
             if (transport.bearing === 0) {
-              transport.bearing = self.mapUtil.geo.bearing(lat, lng, transport.lat, transport.lng);
+              transport.bearing = self.mapUtil.geo.bearing(lat1, lng1, transport.lat, transport.lng);
             }
-            const tempMarker = L.Marker.movingMarker([[lat, lng], [transport.lat, transport.lng]],
-              [10000], { icon: greenIcon, rotationAngle: transport.bearing })
-              .addTo(self.map)
-              .bindPopup('<div class="card"><div class="card-body"><div class="d-flex justify-content-center">' +
-                '<i class="mdi mdi-clock icon-lg text-primary d-flex align-items-center"></i>' +
-                '<div class="d-flex flex-column ml-4"><span class="d-flex flex-column"><p class="mb-0">Bounce rate</p>' +
-                '<h4 class="font-weight-bold">32.16%</h4></span><small class="text-muted">65.45% on average time</small>' +
-                '</div></div></div></div>');
+            const marker = self.mapUtil.geo.moveMarker(lat1, lng1, transport.lat,
+              transport.lng, icon, transport.bearing, self.map, id, 'helo');
+            self.markers.push(marker);
 
-            tempMarker.start();
-            tempMarker['id'] = id;
-            self.markers.push(tempMarker);
             const group = new L.featureGroup(self.markers);
             self.map.fitBounds(group.getBounds());
           }
@@ -114,5 +87,4 @@ export class MapComponent implements OnInit {
       }
     });
   }
-
 }
