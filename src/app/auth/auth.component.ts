@@ -112,6 +112,10 @@ export class AuthComponent implements OnInit {
 
   doForgotPassword() {
     const self = this;
+    if (this.user.email === this.config.EMPTY || this.user.email === undefined) {
+      this.snackBar.open(this.config.ERR_AUTH_INVALID_EMAIL, this.config.OK, { duration: this.config.SNACKBAR_TIMEOUT });
+      return;
+    }
     this.snackBar.open('Getting your password', self.config.OK, { duration: self.config.SNACKBAR_EVER });
     const auth = firebase.auth();
     auth.sendPasswordResetEmail(this.user.email).then(function () {
