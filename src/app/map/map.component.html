@@ -141,9 +141,34 @@
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link" href="../../pages/samples/widgets.html">
-              <i class="menu-icon mdi mdi-trackpad"></i>
-              <span class="menu-title">Widgets</span>
+            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+              <img src="assets/img/tracking.svg" style="width: 26pt;" /><br />
+              <span style="font-size: 8pt;margin-left: -5px;font-weight: 500;">Track</span>
+              <hr />
+            </a>
+          </li>
+          <li class="nav-item"><br /></li>
+          <li class="nav-item">
+            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+              <img src="assets/img/replay.svg" style="width: 26pt;" /><br />
+              <span style="font-size: 8pt;margin-left: -5px;font-weight: 500;">Replay</span>
+              <hr />
+            </a>
+          </li>
+          <li class="nav-item"><br /></li>
+          <li class="nav-item">
+            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+              <img src="assets/img/nearby.svg" style="width: 26pt;" /><br />
+              <span style="font-size: 8pt;margin-left: -5px;font-weight: 500;">Near By</span>
+              <hr />
+            </a>
+          </li>
+          <li class="nav-item"><br /></li>
+          <li class="nav-item">
+            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+              <img src="assets/img/fence.svg" style="width: 26pt;" /><br />
+              <span style="font-size: 8pt;margin-left: -5px;font-weight: 500;">Geo fence</span>
+              <hr />
             </a>
           </li>
         </ul>
@@ -153,29 +178,8 @@
         <div class="content-wrapper" style="padding:0">
           <div id="map" style="height:-webkit-fill-available;width:100%"></div>
 
-          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 grid-margin stretch-card" style="position: absolute;top: 63px;z-index: 1300;left: 58px;">
-            <div class="card card-statistics social-card card-default">
-              <div class="card-header header-sm">
-                <div class="d-flex align-items-center">
-                  <div class="wrapper d-flex align-items-center media-info text-facebook">
-                    <i class="mdi mdi-facebook icon-md"></i>
-                    <h2 class="card-title ml-3">Facebook</h2>
-                  </div>
-                  <div class="wrapper ml-auto action-bar">
-                    <i class="mdi mdi-share-variant mr-3"></i>
-                    <i class="mdi mdi-heart"></i>
-                  </div>
-                </div>
-              </div>
-              <div class="card-body">
-                <img class="d-block img-sm rounded-circle mx-auto mb-2" src="../../../assets/images/faces/face1.jpg"
-                  alt="profile image">
-                <p class="text-center user-name">Mathilda Young</p>
-                <p class="text-center mb-2 comment">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do</p>
-                <small class="d-block mt-4 text-center posted-date">06 May 2018</small>
-              </div>
-            </div>
-          </div>
+          <app-track *ngIf="trackWindow===true"></app-track>
+
         </div>
       </div>
     </div>

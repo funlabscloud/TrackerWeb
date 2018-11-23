@@ -18,13 +18,15 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { AuthComponent } from './auth/auth.component';
 import { MapComponent } from './map/map.component';
+import { TrackComponent } from './track/track.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     AuthComponent,
-    MapComponent
+    MapComponent,
+    TrackComponent
   ],
   imports: [
     BrowserModule,

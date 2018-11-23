@@ -2333,8 +2333,8 @@
  
  .btn-success {
    color: #212529;
-   background-color: #19d895;
-   border-color: #19d895; }
+   background-color: #0cbf80;
+   border-color: #0cbf80; }
    .btn-success:hover {
      color: #fff;
      background-color: #15b67d;
@@ -2410,8 +2410,8 @@
  
  .btn-danger {
    color: #fff;
-   background-color: #ff6258;
-   border-color: #ff6258; }
+   background-color: #e25a51;
+   border-color: #e25a51; }
    .btn-danger:hover {
      color: #fff;
      background-color: #ff3e32;
@@ -8441,7 +8441,7 @@
  /* Navbar */
  .navbar.default-layout {
    font-family: "Poppins", sans-serif;
-   background: linear-gradient(120deg, #445463, #566269, #4c575a);
+   background: linear-gradient(120deg, #4078ad, #266998, #387c9c);
    transition: background 0.25s ease;
    -webkit-transition: background 0.25s ease;
    -moz-transition: background 0.25s ease;
@@ -17005,7 +17005,7 @@
       display: flex;
       padding: 16px 35px;
       white-space: nowrap;
-      height: 52px;
+      height: 70px;
       color: #4a4a4a; }
       .sidebar .nav .nav-item .nav-link i.menu-arrow {
         margin-left: auto;
@@ -17236,7 +17236,7 @@
 
 @media (min-width: 992px) {
   .sidebar-icon-only .navbar .navbar-brand-wrapper {
-    width: 70px; }
+    width: 90px; }
     .sidebar-icon-only .navbar .navbar-brand-wrapper .brand-logo {
       display: none; }
     .sidebar-icon-only .navbar .navbar-brand-wrapper .brand-logo-mini {
@@ -17244,9 +17244,9 @@
       display: -ms-flexbox;
       display: flex; }
   .sidebar-icon-only .navbar .navbar-menu-wrapper {
-    width: calc(100% - 70px); }
+    width: calc(100% - 90px); }
   .sidebar-icon-only .sidebar {
-    width: 70px; }
+    width: 90px; }
     .sidebar-icon-only .sidebar .nav {
       overflow: visible; }
       .sidebar-icon-only .sidebar .nav .nav-item {

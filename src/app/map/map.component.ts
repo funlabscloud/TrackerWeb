@@ -26,6 +26,9 @@ export class MapComponent implements OnInit {
   private markers = [];
   private sideBarOnly = 'sidebar-icon-only';
 
+  // window
+  private trackWindow = false;
+
   constructor(protected localStorage: LocalStorage,
     private router: Router,
     private config: Config,
@@ -39,6 +42,10 @@ export class MapComponent implements OnInit {
     this.localStorage.getItem<any>('user').subscribe((locUser) => {
       this.onMovementListener(locUser);
     });
+  }
+
+  showTrackWindow() {
+    this.trackWindow = true;
   }
 
   onSignout() {
