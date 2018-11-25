@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import 'hammerjs';
 
 import { Config } from './utility/config';
@@ -36,7 +37,8 @@ import { TrackComponent } from './track/track.component';
     HttpClientModule,
     AppRoutingModule,
     LeafletModule.forRoot(),
-    LeafletModule
+    LeafletModule,
+    NgbModule
   ],
   providers: [Config, MapUtil, User, Location],
   bootstrap: [AppComponent]

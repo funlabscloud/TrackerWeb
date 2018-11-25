@@ -23,8 +23,15 @@ declare let L;
 export class MapComponent implements OnInit {
 
   private map;
-  private markers = [];
+  private myAllTransport = [];
   private sideBarOnly = 'sidebar-icon-only';
+  private fireMovementRef;
+  private glob = {
+    myAllTransport: [],
+    map: {},
+    user: {},
+    markers: []
+  };
 
   // window
   private trackWindow = false;
@@ -38,14 +45,28 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     this.map = this.mapUtil.geo.initMap();
+    this.glob['map'] = this.map;
 
-    this.localStorage.getItem<any>('user').subscribe((locUser) => {
-      this.onMovementListener(locUser);
+    this.localStorage.getItem<User>('user').subscribe((locUser: User) => {
+      this.user = locUser;
+      this.glob['user'] = locUser;
+      this.fireMovementRef = firebase.database().ref('movement/' + this.user.uId);
+      this.onMovementListener();
     });
   }
 
   showTrackWindow() {
     this.trackWindow = true;
+  }
+
+  onTrackClosed(closed: boolean) {
+    if (closed) {
+      this.trackWindow = false;
+      this.onMovementListener();
+    } else {
+      // Tracking clicked
+      this.fireMovementRef.off('value');
+    }
   }
 
   onSignout() {
@@ -58,10 +79,10 @@ export class MapComponent implements OnInit {
     });
   }
 
-  onMovementListener(user: any) {
+  onMovementListener() {
     const self = this;
 
-    firebase.database().ref('movement/' + user.uId).on('value', function (data) {
+    self.fireMovementRef.on('value', function (data) {
       const transports = data.val();
       if (transports !== null && transports !== undefined) {
         Object.keys(transports).map(function (id) {
@@ -70,7 +91,11 @@ export class MapComponent implements OnInit {
           transport.power = Math.round(transport.power);
           transport.time = moment(transport.time).fromNow();
 
-          const oldMarker = self.mapUtil.geo.clearMarker(id, self.markers, self.map);
+          if (self.glob.myAllTransport.indexOf(id) === -1) {
+            self.glob.myAllTransport.push(id);
+          }
+
+          const oldMarker = self.mapUtil.geo.clearMarkerArray(id, self.glob.markers, self.map);
           const lat1 = oldMarker._latlng.lat;
           const lng1 = oldMarker._latlng.lng;
 
@@ -78,17 +103,19 @@ export class MapComponent implements OnInit {
 
           if (lat1 === '' || lng1 === '') {
             const marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, transport.bearing, self.map, id, 'helo');
-            self.markers.push(marker);
+            self.glob.markers.push(marker);
           } else {
             if (transport.bearing === 0) {
               transport.bearing = self.mapUtil.geo.bearing(lat1, lng1, transport.lat, transport.lng);
             }
             const marker = self.mapUtil.geo.moveMarker(lat1, lng1, transport.lat,
               transport.lng, icon, transport.bearing, self.map, id, 'helo');
-            self.markers.push(marker);
+            self.glob.markers.push(marker);
 
-            const group = new L.featureGroup(self.markers);
-            self.map.fitBounds(group.getBounds());
+            const group = new L.featureGroup(self.glob.markers);
+            setTimeout(() => {
+              self.map.getCenter().fitBounds(group.getBounds());
+            }, 500);
           }
         });
       }

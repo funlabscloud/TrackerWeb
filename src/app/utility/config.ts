@@ -55,4 +55,5 @@ export class Config {
   ERR_ACTIVATION_INVALID_KEY = 'Username mapped to activation key is invalid!';
   ERR_RESET_INVALID_DETAILS = 'One of the values entered is incorrect!';
   ERR_RESET_INVALID_USERNAME = 'Username not valid. Looks like you forgot your username as well!';
+  ERR_TRANSPORT_ID_REQUIRED = 'Transport ID required';
 }

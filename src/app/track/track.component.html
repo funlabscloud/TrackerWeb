@@ -1,14 +1,18 @@
-<div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 grid-margin stretch-card" style="position: absolute;top: 70px;z-index: 1300;left: 90px;">
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 grid-margin stretch-card" style="position: absolute;top: 70px;z-index: 1300;left: 130px;">
   <div class="card" style="box-shadow: 1px 1px 3px 2px grey;">
     <div class="card-body">
       <div class="d-flex justify-content-between">
         <h4 class="card-title">Live tracking by Transport ID</h4>
-        <i class="mdi mdi-close" style="cursor: pointer;"></i>
+        <i class="mdi mdi-close" style="cursor: pointer;" (click)="closeTrackWindow()"></i>
       </div>
       <div class="add-items d-flex">
-        <input type="text" class="form-control todo-list-input" placeholder="Search transport" style="font-size: 10pt;
-        font-weight: 500;">
-        <button class="add btn btn-success btn-rounded font-weight-medium todo-list-add-btn">Track</button>
+        <input type="text" [(ngModel)]="transportId" [ngbTypeahead]="transportSearch" class=" form-control todo-list-input"
+          placeholder="Search transport" style="font-size: 10pt;
+        font-weight: 500;" autocomplete="off">
+        <button *ngIf="isTracking==false" class="add btn btn-success btn-rounded font-weight-medium todo-list-add-btn"
+          (click)="onTrack()">Track</button>
+        <button *ngIf="isTracking==true" class="add btn btn-danger btn-rounded font-weight-medium todo-list-add-btn"
+          (click)="onTrackEnd()">End</button>
       </div>
     </div>
   </div>

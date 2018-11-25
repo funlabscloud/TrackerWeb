@@ -178,7 +178,7 @@
         <div class="content-wrapper" style="padding:0">
           <div id="map" style="height:-webkit-fill-available;width:100%"></div>
 
-          <app-track *ngIf="trackWindow===true"></app-track>
+          <app-track [glob]="glob" *ngIf="trackWindow===true" (trackClosed)="onTrackClosed($event)"></app-track>
 
         </div>
       </div>

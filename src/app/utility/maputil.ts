@@ -34,32 +34,39 @@ export class MapUtil {
         },
         moveMarker: function (lat1, lng1, lat2, lng2, icon, bearing, map, id, html) {
             const marker = L.Marker.movingMarker([[lat1, lng1], [lat2, lng2]],
-                500, { icon: icon, rotationAngle: bearing })
+                1200, { icon: icon, rotationAngle: bearing })
                 .addTo(map)
                 .bindPopup(html);
             marker.start();
             marker['id'] = id;
             return marker;
         },
-        clearMarker: function (id, markers, map) {
+        clearMarker: function (marker, map) {
+            if (marker !== undefined) {
+                map.removeLayer(marker);
+            }
+        },
+        clearMarkerArray: function (id, markers, map) {
             if (markers.length > 0) {
                 for (let itr = 0; itr <= markers.length - 1; itr++) {
-                    const marker = markers[itr];
-                    if (id === marker.id) {
-                        map.removeLayer(marker);
+                    const tempMarker = markers[itr];
+                    if (id === tempMarker.id) {
+                        map.removeLayer(tempMarker);
                         markers.splice(itr, 1);
-                        return marker;
+                        return tempMarker;
                     }
                 }
-            } else {
-                const marker: any = { _latlng: { lat: '', lng: '' } };
-                return marker;
             }
+            const marker: any = { _latlng: { lat: '', lng: '' } };
+            return marker;
         },
         mapIcon: function (transportType) {
             const icon = L.icon({
-                iconUrl: 'assets/img/car.svg',
-                iconSize: [40, 40]
+                iconUrl: 'assets/img/car.png',
+                iconSize: [30, 30],
+                iconAnchor: [0, 0],
+                popupAnchor: [1, -34],
+                shadowSize: [0, 0]
             });
             return icon;
         }
