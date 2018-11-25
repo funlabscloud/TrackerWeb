@@ -34,7 +34,7 @@ export class MapUtil {
         },
         moveMarker: function (lat1, lng1, lat2, lng2, icon, bearing, map, id, html) {
             const marker = L.Marker.movingMarker([[lat1, lng1], [lat2, lng2]],
-                1200, { icon: icon, rotationAngle: bearing })
+                3000, { icon: icon, rotationAngle: bearing })
                 .addTo(map)
                 .bindPopup(html);
             marker.start();
@@ -62,9 +62,9 @@ export class MapUtil {
         },
         mapIcon: function (transportType) {
             const icon = L.icon({
-                iconUrl: 'assets/img/car.png',
+                iconUrl: 'assets/img/parking.svg',
                 iconSize: [30, 30],
-                iconAnchor: [0, 0],
+                iconAnchor: [15, 30],
                 popupAnchor: [1, -34],
                 shadowSize: [0, 0]
             });

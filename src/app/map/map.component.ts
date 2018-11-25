@@ -114,7 +114,7 @@ export class MapComponent implements OnInit {
 
             const group = new L.featureGroup(self.glob.markers);
             setTimeout(() => {
-              self.map.getCenter().fitBounds(group.getBounds());
+              self.map.fitBounds(group.getBounds());
             }, 500);
           }
         });
