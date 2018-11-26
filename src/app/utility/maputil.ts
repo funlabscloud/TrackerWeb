@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 declare let L;
+declare var moment: any;
 
 @Injectable()
 export class MapUtil {
@@ -61,10 +62,10 @@ export class MapUtil {
             return marker;
         },
         mapIcon: function (transportType) {
-            if (transportType === 'CAR') {
+            if (transportType === 'RUNNING') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/car.png',
-                    iconSize: [30, 30],
+                    iconUrl: 'assets/img/heading.png',
+                    iconSize: [20, 20],
                     iconAnchor: [15, 30],
                     popupAnchor: [1, -34],
                     shadowSize: [0, 0]
@@ -73,13 +74,37 @@ export class MapUtil {
             } else if (transportType === 'PARKING') {
                 const icon = L.icon({
                     iconUrl: 'assets/img/parking.svg',
-                    iconSize: [30, 30],
+                    iconSize: [25, 25],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [1, -34],
+                    shadowSize: [0, 0]
+                });
+                return icon;
+            } else if (transportType === 'IDLE') {
+                const icon = L.icon({
+                    iconUrl: 'assets/img/orange_dot.png',
+                    iconSize: [18, 20],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [1, -34],
+                    shadowSize: [0, 0]
+                });
+                return icon;
+            } else if (transportType === 'DISCONNECT') {
+                const icon = L.icon({
+                    iconUrl: 'assets/img/red_dot.png',
+                    iconSize: [20, 20],
                     iconAnchor: [15, 30],
                     popupAnchor: [1, -34],
                     shadowSize: [0, 0]
                 });
                 return icon;
             }
+        },
+        timeDiffrence: function (startDate, endDate) {
+            const start_date = moment(startDate);
+            const end_date = moment(endDate);
+            const duration = start_date.diff(end_date, 'minutes');
+            return duration;
         }
     };
 

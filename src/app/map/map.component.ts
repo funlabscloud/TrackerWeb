@@ -99,7 +99,13 @@ export class MapComponent implements OnInit {
           const lat1 = oldMarker._latlng.lat;
           const lng1 = oldMarker._latlng.lng;
 
-          const icon = self.mapUtil.geo.mapIcon('CAR');
+          let icon;
+          if (transport.speed < 10) {
+            icon = self.mapUtil.geo.mapIcon('IDLE');
+          } else {
+            icon = self.mapUtil.geo.mapIcon('RUNNING');
+          }
+
 
           if (lat1 === '' || lng1 === '') {
             const marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, transport.bearing, self.map, id, 'helo');
