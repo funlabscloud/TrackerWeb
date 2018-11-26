@@ -15,5 +15,28 @@
           (click)="onTrackEnd()">End</button>
       </div>
     </div>
+
+    <div class="card-body d-flex flex-column" *ngIf="isTracking">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <h1 class="font-weight-medium mb-0">{{track.speed}}</h1>&nbsp;&nbsp;<h6 class="font-weight-medium mb-0">km/h</h6>
+        </div>
+        <i class="mdi mdi-battery-20" style="font-size:15pt;margin-left: 27%"></i>
+        <span class="chart-label">
+          <div class="badge badge-pill badge-lg badge-danger my-auto ml-3 d-none d-lg-block">{{track.battery}}%</div>
+        </span>
+      </div>
+      <div class="wrapper mt-4">
+        <div class="d-flex align-items-center py-3 border-bottom">
+          <span class="dot-indicator bg-warning"></span>
+          <p class="mb-0 ml-3">{{track.status}}</p>
+          <p class="ml-auto mb-0 text-muted">{{track.reported}}</p>
+        </div>
+        <div class="d-flex align-items-center py-3 border-bottom">
+          <i class="mdi mdi-satellite-variant" style="font-size: 16pt;"></i>
+          <p class="mb-0 ml-3" style="font-size: 9pt;text-align: center">{{track.place}}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

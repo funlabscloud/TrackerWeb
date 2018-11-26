@@ -61,14 +61,25 @@ export class MapUtil {
             return marker;
         },
         mapIcon: function (transportType) {
-            const icon = L.icon({
-                iconUrl: 'assets/img/parking.svg',
-                iconSize: [30, 30],
-                iconAnchor: [15, 30],
-                popupAnchor: [1, -34],
-                shadowSize: [0, 0]
-            });
-            return icon;
+            if (transportType === 'CAR') {
+                const icon = L.icon({
+                    iconUrl: 'assets/img/car.png',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [1, -34],
+                    shadowSize: [0, 0]
+                });
+                return icon;
+            } else if (transportType === 'PARKING') {
+                const icon = L.icon({
+                    iconUrl: 'assets/img/parking.svg',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [1, -34],
+                    shadowSize: [0, 0]
+                });
+                return icon;
+            }
         }
     };
 

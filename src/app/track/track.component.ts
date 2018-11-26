@@ -23,9 +23,10 @@ export class TrackComponent implements OnInit {
   private transportId = '';
   private isTracking = false;
   private fireMovementRef;
-  private lastKnownPoint = { lat: '', lng: '' };
   private marker;
   private polyLine;
+  private lastKnownPoint = { lat: '', lng: '' };
+  private track = { speed: 0, battery: 0, status: '', reported: '', place: '2nd Aveneue, Mugalivakkam, Chennai' };
 
   constructor(private config: Config, private snackBar: MatSnackBar, private mapUtil: MapUtil) { }
 
@@ -46,7 +47,6 @@ export class TrackComponent implements OnInit {
       this.snackBar.open(this.config.ERR_TRANSPORT_ID_REQUIRED, this.config.OK, { duration: this.config.SNACKBAR_TIMEOUT });
       return;
     }
-    this.isTracking = true;
 
     for (let itr = 0; itr <= this.glob.markers.length - 1; itr++) {
       this.glob.map.removeLayer(this.glob.markers[itr]);
@@ -77,15 +77,29 @@ export class TrackComponent implements OnInit {
           const transport = transports[0];
           transport.power = Math.round(transport.power);
           transport.time = moment(transport.time).fromNow();
-          const icon = self.mapUtil.geo.mapIcon('CAR');
+
+          self.track.speed = Math.round(transport.speed);
+          self.track.battery = transport.power;
+          self.track.reported = transport.time;
+
+          if (transport.bearing === 0) {
+            transport.bearing = self.mapUtil.geo.bearing(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat, transport.lng);
+          }
+
+          let icon;
+          if (transport.speed > 10) {
+            icon = self.mapUtil.geo.mapIcon('CAR');
+            self.track.status = 'Running';
+          } else {
+            icon = self.mapUtil.geo.mapIcon('PARKING');
+            transport.bearing = 0;
+            self.track.status = 'Parked';
+          }
 
           if (self.lastKnownPoint.lat === '' && self.lastKnownPoint.lng === '') {
             const latlngs = [[transport.lat, transport.lng], [transport.lat, transport.lng]];
             self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
           } else {
-            if (transport.bearing === 0) {
-              transport.bearing = self.mapUtil.geo.bearing(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat, transport.lng);
-            }
             const latlngs = [[self.lastKnownPoint.lat, self.lastKnownPoint.lng], [transport.lat, transport.lng]];
             self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
           }
@@ -93,7 +107,7 @@ export class TrackComponent implements OnInit {
           self.mapUtil.geo.clearMarker(self.marker, self.glob.map);
 
           self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
-            transport.lng, icon, transport.bearing, self.glob.map, '', 'helo');
+            transport.lng, icon, transport.bearing, self.glob.map, '', 'Parked since ');
 
           self.lastKnownPoint.lat = transport.lat;
           self.lastKnownPoint.lng = transport.lng;
@@ -104,6 +118,7 @@ export class TrackComponent implements OnInit {
             }
           }, 500);
 
+          self.isTracking = true;
         });
       }
     });
