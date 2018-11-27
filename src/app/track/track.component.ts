@@ -25,8 +25,9 @@ export class TrackComponent implements OnInit {
   private fireMovementRef;
   private marker;
   private polyLine;
-  private parkingStart = '';
   private layerGroup;
+  private parkingStart: any;
+  private runningTime = new Date();
   private lastKnownPoint = { lat: '', lng: '' };
   private track = {
     speed: 0,
@@ -89,53 +90,49 @@ export class TrackComponent implements OnInit {
           let icon;
           self.mapUtil.geo.clearMarker(self.marker, self.glob.map);
 
-          const disconnectDuration = self.mapUtil.geo.timeDiffrence(new Date().getTime(), transports[0].time);
-          if (disconnectDuration <= 30) {
-            if (transport.speed < 10) {
-              icon = self.mapUtil.geo.mapIcon('IDLE');
-              self.track.status = 'IDLE';
-              self.track.statusCSS = 'bg-facebook';
-              if (self.parkingStart === '') {
-                self.parkingStart = transports[0].time;
-              } else {
-                const duration = self.mapUtil.geo.timeDiffrence(transports[0].time, self.parkingStart);
-                if (duration >= 5) {
-                  transport.bearing = 0;
-                  icon = self.mapUtil.geo.mapIcon('PARKING');
-                  self.track.speed = 0;
-                  self.track.status = 'Parked';
-                  self.track.statusCSS = 'bg-warning';
-                }
-              }
-              self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
-              self.layerGroup = new L.featureGroup([self.marker]);
-            } else {
-              // Seems Running
-              self.track.status = 'Running';
-              self.track.statusCSS = 'bg-success';
-              self.track.speed = Math.round(transport.speed);
-              icon = self.mapUtil.geo.mapIcon('RUNNING');
-
-              if (transport.bearing === 0) {
-                transport.bearing = self.mapUtil.geo.bearing(self.lastKnownPoint.lat,
-                  self.lastKnownPoint.lng, transport.lat, transport.lng);
-              }
-              if (self.lastKnownPoint.lat === '' && self.lastKnownPoint.lng === '') {
-                const latlngs = [[transport.lat, transport.lng], [transport.lat, transport.lng]];
-                self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
-
-                self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
-                  transport.lng, icon, transport.bearing, self.glob.map, '', '');
-              } else {
-                const latlngs = [[self.lastKnownPoint.lat, self.lastKnownPoint.lng], [transport.lat, transport.lng]];
-                self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
-                self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
-                  transport.lng, icon, transport.bearing, self.glob.map, '', '');
-              }
-              self.layerGroup = new L.featureGroup([self.polyLine]);
+          if (transport.motion === 'IDLE') {
+            icon = self.mapUtil.geo.mapIcon('IDLE');
+            self.track.status = 'IDLE';
+            self.track.statusCSS = 'bg-facebook';
+            self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
+            self.layerGroup = new L.featureGroup([self.marker]);
+          } else if (transport.motion === 'PARKED') {
+            if (self.parkingStart === undefined) {
+              self.parkingStart = new Date(transport.time);
             }
-          } else {
-            // Disconnected
+            icon = self.mapUtil.geo.mapIcon('PARKED');
+            self.track.speed = 0;
+            self.track.status = 'Parked';
+            self.track.statusCSS = 'bg-warning';
+            self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
+            self.layerGroup = new L.featureGroup([self.marker]);
+            setInterval(() => {
+              self.runningTime = new Date();
+            }, 1000);
+          } else if (transport.motion === 'RUNNING') {
+            self.track.status = 'Running';
+            self.track.statusCSS = 'bg-success';
+            self.track.speed = Math.round(transport.speed);
+            icon = self.mapUtil.geo.mapIcon('RUNNING');
+
+            if (transport.bearing === 0) {
+              transport.bearing = self.mapUtil.geo.bearing(self.lastKnownPoint.lat,
+                self.lastKnownPoint.lng, transport.lat, transport.lng);
+            }
+            if (self.lastKnownPoint.lat === '' && self.lastKnownPoint.lng === '') {
+              const latlngs = [[transport.lat, transport.lng], [transport.lat, transport.lng]];
+              self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
+
+              self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
+                transport.lng, icon, transport.bearing, self.glob.map, '', '');
+            } else {
+              const latlngs = [[self.lastKnownPoint.lat, self.lastKnownPoint.lng], [transport.lat, transport.lng]];
+              self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
+              self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
+                transport.lng, icon, transport.bearing, self.glob.map, '', '');
+            }
+            self.layerGroup = new L.featureGroup([self.polyLine]);
+          } else if (transport.motion === 'DISCONNECTED') {
             self.track.speed = 0;
             self.track.statusCSS = 'bg-danger';
             self.track.status = 'Disconnected';

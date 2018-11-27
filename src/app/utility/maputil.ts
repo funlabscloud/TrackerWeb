@@ -71,7 +71,7 @@ export class MapUtil {
                     shadowSize: [0, 0]
                 });
                 return icon;
-            } else if (transportType === 'PARKING') {
+            } else if (transportType === 'PARKED') {
                 const icon = L.icon({
                     iconUrl: 'assets/img/parking.svg',
                     iconSize: [25, 25],
@@ -99,12 +99,6 @@ export class MapUtil {
                 });
                 return icon;
             }
-        },
-        timeDiffrence: function (startDate, endDate) {
-            const start_date = moment(startDate);
-            const end_date = moment(endDate);
-            const duration = start_date.diff(end_date, 'minutes');
-            return duration;
         }
     };
 

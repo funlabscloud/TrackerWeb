@@ -27,10 +27,28 @@
         </span>
       </div>
       <div class="wrapper mt-4">
-        <div class="d-flex align-items-center py-3 border-bottom">
+        <div class="d-flex align-items-center py-1 border-bottom">
           <span class="dot-indicator {{track.statusCSS}}"></span>
           <p class="mb-0 ml-3">{{track.status}}</p>
-          <p class="ml-auto mb-0 text-muted">{{track.reported}}</p>
+          <ul class="bullet-line-list pb-1" style="margin-left: 14%;">
+            <li>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex">
+                  <div class="">
+                    <h6 class="mb-0" style="font-size: 9pt;">{{parkingStart | date:'d-M-yy, h:mm a'}}</h6>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex">
+                  <h6 class="mb-0" style="font-size: 9pt;">{{runningTime | date:'d-M-yy, h:mm a'}}</h6>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <!-- <p class="ml-auto mb-0 text-muted">{{track.reported}}</p> -->
         </div>
         <div class="d-flex align-items-center py-3 border-bottom">
           <i class="mdi mdi-satellite-variant" style="font-size: 16pt;"></i>
