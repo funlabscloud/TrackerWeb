@@ -26,8 +26,17 @@ export class TrackComponent implements OnInit {
   private marker;
   private polyLine;
   private parkingStart = '';
+  private layerGroup;
   private lastKnownPoint = { lat: '', lng: '' };
-  private track = { speed: 0, battery: 0, status: '', reported: '', place: '2nd Aveneue, Mugalivakkam, Chennai' };
+  private track = {
+    speed: 0,
+    battery: 0,
+    status: '',
+    reported: '',
+    place: '2nd Aveneue, Mugalivakkam, Chennai',
+    batteryCSS: '',
+    statusCSS: ''
+  };
 
   constructor(private config: Config, private snackBar: MatSnackBar, private mapUtil: MapUtil) { }
 
@@ -77,67 +86,79 @@ export class TrackComponent implements OnInit {
         Object.keys(transports).map(function (index) {
           const transport = transports[0];
 
-          if (transport.bearing === 0) {
-            transport.bearing = self.mapUtil.geo.bearing(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat, transport.lng);
-          }
-
           let icon;
-          const disconnectDuration = self.mapUtil.geo.timeDiffrence(new Date().getTime, transports[0].time);
-          if (disconnectDuration <= 15) {
-            self.track.status = 'Running';
-            icon = self.mapUtil.geo.mapIcon('RUNNING');
+          self.mapUtil.geo.clearMarker(self.marker, self.glob.map);
 
-            if (self.lastKnownPoint.lat === '' && self.lastKnownPoint.lng === '') {
-              const latlngs = [[transport.lat, transport.lng], [transport.lat, transport.lng]];
-              self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
-            } else {
-
-              if (transport.speed < 10) {
-                icon = self.mapUtil.geo.mapIcon('IDLE');
-                self.track.status = 'Idle';
-                if (self.parkingStart === '') {
-                  self.parkingStart = transports[0].time;
-                } else {
-                  const duration = self.mapUtil.geo.timeDiffrence(transports[0].time, self.parkingStart);
-                  if (duration >= 5) {
-                    transport.bearing = 0;
-                    icon = self.mapUtil.geo.mapIcon('PARKING');
-                    self.track.status = 'Parked';
-                  }
+          const disconnectDuration = self.mapUtil.geo.timeDiffrence(new Date().getTime(), transports[0].time);
+          if (disconnectDuration <= 30) {
+            if (transport.speed < 10) {
+              icon = self.mapUtil.geo.mapIcon('IDLE');
+              self.track.status = 'IDLE';
+              self.track.statusCSS = 'bg-facebook';
+              if (self.parkingStart === '') {
+                self.parkingStart = transports[0].time;
+              } else {
+                const duration = self.mapUtil.geo.timeDiffrence(transports[0].time, self.parkingStart);
+                if (duration >= 5) {
+                  transport.bearing = 0;
+                  icon = self.mapUtil.geo.mapIcon('PARKING');
+                  self.track.speed = 0;
+                  self.track.status = 'Parked';
+                  self.track.statusCSS = 'bg-warning';
                 }
               }
+              self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
+              self.layerGroup = new L.featureGroup([self.marker]);
+            } else {
+              // Seems Running
+              self.track.status = 'Running';
+              self.track.statusCSS = 'bg-success';
+              self.track.speed = Math.round(transport.speed);
+              icon = self.mapUtil.geo.mapIcon('RUNNING');
 
-              const latlngs = [[self.lastKnownPoint.lat, self.lastKnownPoint.lng], [transport.lat, transport.lng]];
-              self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
+              if (transport.bearing === 0) {
+                transport.bearing = self.mapUtil.geo.bearing(self.lastKnownPoint.lat,
+                  self.lastKnownPoint.lng, transport.lat, transport.lng);
+              }
+              if (self.lastKnownPoint.lat === '' && self.lastKnownPoint.lng === '') {
+                const latlngs = [[transport.lat, transport.lng], [transport.lat, transport.lng]];
+                self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
+
+                self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
+                  transport.lng, icon, transport.bearing, self.glob.map, '', '');
+              } else {
+                const latlngs = [[self.lastKnownPoint.lat, self.lastKnownPoint.lng], [transport.lat, transport.lng]];
+                self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);
+                self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
+                  transport.lng, icon, transport.bearing, self.glob.map, '', '');
+              }
+              self.layerGroup = new L.featureGroup([self.polyLine]);
             }
-
-            self.mapUtil.geo.clearMarker(self.marker, self.glob.map);
-
-            self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
-              transport.lng, icon, transport.bearing, self.glob.map, '', 'Parked since ');
-
-            self.lastKnownPoint.lat = transport.lat;
-            self.lastKnownPoint.lng = transport.lng;
-            self.track.speed = Math.round(transport.speed);
-
-            const group = new L.featureGroup([self.marker]);
-            self.glob.map.fitBounds(group.getBounds());
-
           } else {
+            // Disconnected
+            self.track.speed = 0;
+            self.track.statusCSS = 'bg-danger';
             self.track.status = 'Disconnected';
             icon = self.mapUtil.geo.mapIcon('DISCONNECT');
-            self.track.speed = 0;
-            const marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
-
-            const group = new L.featureGroup([marker]);
-            self.glob.map.fitBounds(group.getBounds());
+            self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
+            self.layerGroup = new L.featureGroup([self.marker]);
           }
 
+          self.lastKnownPoint.lat = transport.lat;
+          self.lastKnownPoint.lng = transport.lng;
           transport.power = Math.round(transport.power);
           transport.time = moment(transport.time).fromNow();
           self.track.battery = transport.power;
           self.track.reported = transport.time;
+          self.glob.map.fitBounds(self.layerGroup.getBounds());
 
+          if (transport.power > 0 && transport.power < 20) {
+            self.track.batteryCSS = 'badge-danger';
+          } else if (transport.power > 20 && transport.power < 50) {
+            self.track.batteryCSS = 'badge-warning';
+          } else if (transport.power > 50 && transport.power <= 100) {
+            self.track.batteryCSS = 'badge-success';
+          }
           self.isTracking = true;
         });
       }

@@ -83,7 +83,7 @@ export class MapUtil {
             } else if (transportType === 'IDLE') {
                 const icon = L.icon({
                     iconUrl: 'assets/img/orange_dot.png',
-                    iconSize: [18, 20],
+                    iconSize: [21, 29],
                     iconAnchor: [15, 30],
                     popupAnchor: [1, -34],
                     shadowSize: [0, 0]
