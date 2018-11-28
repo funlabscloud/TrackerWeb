@@ -35,6 +35,7 @@ export class MapComponent implements OnInit {
 
   // window
   private trackWindow = false;
+  private replayWindow = false;
 
   constructor(protected localStorage: LocalStorage,
     private router: Router,
@@ -66,6 +67,16 @@ export class MapComponent implements OnInit {
     } else {
       // Tracking clicked
       this.fireMovementRef.off('value');
+    }
+  }
+
+  showReplayWindow() {
+    this.replayWindow = true;
+  }
+
+  onReplayClosed(closed: boolean) {
+    if (closed) {
+      this.replayWindow = false;
     }
   }
 

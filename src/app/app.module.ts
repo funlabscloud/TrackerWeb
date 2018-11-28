@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import 'hammerjs';
 
 import { Config } from './utility/config';
@@ -20,6 +21,7 @@ import { HomeComponent } from './home/home.component';
 import { AuthComponent } from './auth/auth.component';
 import { MapComponent } from './map/map.component';
 import { TrackComponent } from './track/track.component';
+import { ReplayComponent } from './replay/replay.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,8 @@ import { TrackComponent } from './track/track.component';
     HomeComponent,
     AuthComponent,
     MapComponent,
-    TrackComponent
+    TrackComponent,
+    ReplayComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,9 @@ import { TrackComponent } from './track/track.component';
     AppRoutingModule,
     LeafletModule.forRoot(),
     LeafletModule,
-    NgbModule
+    NgbModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule
   ],
   providers: [Config, MapUtil, User, Location],
   bootstrap: [AppComponent]

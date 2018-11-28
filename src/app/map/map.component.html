@@ -149,7 +149,7 @@
           </li>
           <li class="nav-item"><br /></li>
           <li class="nav-item">
-            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+            <a class="nav-link" style="cursor: pointer;" (click)="showReplayWindow();">
               <img src="assets/img/replay.svg" style="width: 26pt;" /><br />
               <span style="font-size: 8pt;margin-left: -5px;font-weight: 500;">Replay</span>
               <hr />
@@ -179,7 +179,7 @@
           <div id="map" style="height:-webkit-fill-available;width:100%"></div>
 
           <app-track [glob]="glob" *ngIf="trackWindow===true" (trackClosed)="onTrackClosed($event)"></app-track>
-
+          <app-replay [glob]="glob" *ngIf="replayWindow===true" (replayClosed)="onReplayClosed($event)"></app-replay>
         </div>
       </div>
     </div>

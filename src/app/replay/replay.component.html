@@ -1,19 +1,49 @@
-<div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 grid-margin stretch-card" style="position: absolute;top: 70px;z-index: 1300;left: 130px;">
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 grid-margin stretch-card" style="position: absolute;top: 70px;z-index: 900;left: 130px;">
   <div class="card" style="box-shadow: 1px 1px 3px 2px grey;">
     <div class="card-body" style="padding: 1.88rem 1.81rem 0.5rem;">
       <div class="d-flex justify-content-between">
-        <h4 class="card-title">Live tracking by Transport ID</h4>
-        <i class="mdi mdi-close" style="cursor: pointer;" (click)="closeTrackWindow()"></i>
+        <h4 class="card-title">Replay by Transport ID</h4>
+        <i class="mdi mdi-close" style="cursor: pointer;" (click)="closeReplayWindow()"></i>
       </div>
       <div class="add-items d-flex">
         <input type="text" [(ngModel)]="transportId" [ngbTypeahead]="transportSearch" class=" form-control todo-list-input"
-          placeholder="Search transport" style="font-size: 10pt;
+          placeholder="Transport ID" style="font-size: 10pt;
         font-weight: 500;" autocomplete="off">
         <button *ngIf="isTracking==false" class="add btn btn-success btn-rounded font-weight-medium todo-list-add-btn"
-          (click)="onTrack()">Track</button>
+          (click)="onReplay()">Replay</button>
         <button *ngIf="isTracking==true" class="add btn btn-danger btn-rounded font-weight-medium todo-list-add-btn"
-          (click)="onTrackEnd()">End</button>
+          (click)="onReplayEnd()">End</button>
       </div>
+
+      <div id="datepicker-popup" class="input-group date datepicker">
+        <input [(ngModel)]="dateRange" readonly [owlDateTime]="dt2" [selectMode]="'range'" placeholder="Date Time"
+          class=" form-control todo-list-input" style="font-weight: 500;">
+        <span [owlDateTimeTrigger]="dt2" class="input-group-addon input-group-append border-left">
+          <span class="mdi mdi-calendar input-group-text"></span>
+        </span>
+        <owl-date-time #dt2></owl-date-time>
+
+        <ul class="bullet-line-list pb-1">
+          <li>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex">
+                <div class="">
+                  <h6 class="mb-0" style="font-size: 9pt;font-weight: 500;">{{dateRange}}</h6>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex">
+                <h6 class="mb-0" style="font-size: 9pt;font-weight: 500;">{{dateRange}}</h6>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+
     </div>
 
     <div class="card-body d-flex flex-column" *ngIf="isTracking">

@@ -28,18 +28,22 @@ export class MapUtil {
         },
         marker: function (lat, lng, icon, bearing, map, id, html) {
             const marker = L.marker([lat, lng],
-                { icon: icon, rotationAngle: bearing }).addTo(map)
-                .bindPopup(html);
+                { icon: icon, rotationAngle: bearing }).addTo(map);
             marker['id'] = id;
+            if (html !== '') {
+                marker.bindPopup(html);
+            }
             return marker;
         },
         moveMarker: function (lat1, lng1, lat2, lng2, icon, bearing, map, id, html) {
             const marker = L.Marker.movingMarker([[lat1, lng1], [lat2, lng2]],
                 3000, { icon: icon, rotationAngle: bearing })
-                .addTo(map)
-                .bindPopup(html);
+                .addTo(map);
             marker.start();
             marker['id'] = id;
+            if (html !== '') {
+                marker.bindPopup(html);
+            }
             return marker;
         },
         clearMarker: function (marker, map) {
@@ -66,7 +70,7 @@ export class MapUtil {
                 const icon = L.icon({
                     iconUrl: 'assets/img/heading.png',
                     iconSize: [20, 20],
-                    iconAnchor: [15, 30],
+                    iconAnchor: [11, 24],
                     popupAnchor: [1, -34],
                     shadowSize: [0, 0]
                 });
@@ -75,7 +79,7 @@ export class MapUtil {
                 const icon = L.icon({
                     iconUrl: 'assets/img/parking.svg',
                     iconSize: [25, 25],
-                    iconAnchor: [15, 30],
+                    iconAnchor: [11, 24],
                     popupAnchor: [1, -34],
                     shadowSize: [0, 0]
                 });
@@ -99,7 +103,12 @@ export class MapUtil {
                 });
                 return icon;
             }
+        },
+        timeDiffrence: function (startDate, endDate) {
+            const start_date = moment(startDate);
+            const end_date = moment(endDate);
+            const duration = start_date.diff(end_date, 'minutes');
+            return duration;
         }
     };
-
 }
