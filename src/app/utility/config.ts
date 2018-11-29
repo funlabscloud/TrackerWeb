@@ -32,6 +32,7 @@ export class Config {
   public SNACKBAR_EVER = 9999999999;
   public OK = 'Ok';
   public EMPTY = '';
+  public UNDEFINED = undefined;
   public ACCESS_TOKEN = 'access_token';
   public ACCESS_TOKEN_EXPIRES_IN = 'access_token_expires_in';
   public REFRESH_TOKEN = 'refresh_token';
@@ -56,4 +57,5 @@ export class Config {
   ERR_RESET_INVALID_DETAILS = 'One of the values entered is incorrect!';
   ERR_RESET_INVALID_USERNAME = 'Username not valid. Looks like you forgot your username as well!';
   ERR_TRANSPORT_ID_REQUIRED = 'Transport ID required';
+  ERR_DATE_RANGE_REQUIRED = 'From and To date required';
 }
