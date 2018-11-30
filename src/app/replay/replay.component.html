@@ -2,7 +2,7 @@
   <div class="card" style="box-shadow: 1px 1px 3px 2px grey;">
     <div class="card-body" style="padding: 1.88rem 1.81rem 0.5rem;">
       <div class="d-flex justify-content-between">
-        <h4 class="card-title">Replay by Transport ID</h4>
+        <h4 class="card-title">History by Transport ID</h4>
         <i class="mdi mdi-close" style="cursor: pointer;" (click)="closeReplayWindow()"></i>
       </div>
       <div class="add-items d-flex">
@@ -12,12 +12,20 @@
       </div>
 
       <div id="datepicker-popup" class="input-group date datepicker">
-        <input [(ngModel)]="dateRange" readonly [owlDateTime]="dt2" [selectMode]="'range'" placeholder="Date Time"
-          class=" form-control todo-list-input" style="font-weight: 500;">
+        <input readonly placeholder="From Date" class=" form-control todo-list-input" style="font-weight: 500;font-size: 10pt;"
+          [owlDateTime]="dt1" [(ngModel)]="selectedMoments" [selectMode]="'rangeFrom'">
+        <span [owlDateTimeTrigger]="dt1" class="input-group-addon input-group-append border-left">
+          <span class="mdi mdi-calendar input-group-text"></span>
+        </span>
+        <owl-date-time #dt1 [hour12Timer]="true"></owl-date-time>
+      </div>
+      <div id="datepicker-popup" class="input-group date datepicker" style="margin-top: 10%;">
+        <input readonly placeholder="To Date" class=" form-control todo-list-input" style="font-weight: 500;font-size: 10pt;"
+          [owlDateTime]="dt2" [(ngModel)]="selectedMoments" [selectMode]="'rangeTo'">
         <span [owlDateTimeTrigger]="dt2" class="input-group-addon input-group-append border-left">
           <span class="mdi mdi-calendar input-group-text"></span>
         </span>
-        <owl-date-time #dt2></owl-date-time>
+        <owl-date-time #dt2 [hour12Timer]="true"></owl-date-time>
       </div>
 
       <button style="margin: 19px 0px 10px 0px;" class="add btn btn-success btn-rounded font-weight-medium todo-list-add-btn"

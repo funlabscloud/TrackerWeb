@@ -107,8 +107,76 @@ export class MapUtil {
         timeDiffrence: function (startDate, endDate) {
             const start_date = moment(startDate);
             const end_date = moment(endDate);
-            const duration = start_date.diff(end_date, 'minutes');
+            const duration = end_date.diff(start_date, 'minutes');
             return duration;
+        },
+        distanceBetweenPoints: function (p1, p2) {
+            if (!p1 || !p2) {
+                return 0;
+            }
+            const R = 6371;
+            const dLat = (p2.lat() - p1.lat()) * Math.PI / 180;
+            const dLon = (p2.lng() - p1.lng()) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(p1.lat() * Math.PI / 180) * Math.cos(p2.lat() * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = R * c;
+            return d;
+        },
+        parkingFinder: function (points) {
+            const self = this;
+            let park = { lat: '', lng: '', location: '', start: '', end: '', duration: '', power: '' };
+            const totalPoints = points.length;
+            const parked = [];
+            Object.keys(points).map(function (index) {
+                let itr = 1;
+                const point = points[index];
+                if (point.motion === 'PARKED') {
+                    if (park.start === '') {
+                        park.start = point.time;
+                        park.location = 'Chennai';
+                        park.power = point.power;
+                    }
+
+                    if (itr === totalPoints) {
+                        park.lat = point.lat;
+                        park.lng = point.lng;
+                        park.end = point.time;
+                        park.duration = self.timeDiffrence(park.start, park.end);
+                        parked.push(park);
+                        park = { lat: '', lng: '', location: '', start: '', end: '', duration: '', power: '' };
+                    }
+                } else {
+                    if (park.start !== '') {
+                        park.lat = point.lat;
+                        park.lng = point.lng;
+                        park.end = point.time;
+                        park.duration = self.timeDiffrence(park.start, park.end);
+                        parked.push(park);
+                        park = { lat: '', lng: '', location: '', start: '', end: '', duration: '', power: '' };
+                    }
+                }
+                itr++;
+            });
+
+            // Eliminate parking duration < 5min
+            let parkedLen = parked.length;
+            for (let itr = 0; itr <= parked.length - 1; itr++) {
+                if (parked[itr].duration < 5) {
+                    delete parked[itr];
+                    parkedLen = parkedLen - 1;
+                }
+            }
+
+            // Eliminate parking distance < 500m between two points
+            if (parkedLen > 1) {
+                Object.keys(parked).map(function (index) {
+                    const p1 = { lat: parked[index].lat, lng: parked[index].lng };
+                    const p2 = { lat: parked[index + 1].lat, lng: parked[index + 1].lng };
+                });
+            }
+            return parked;
         }
     };
 }

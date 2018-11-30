@@ -6,8 +6,18 @@ import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_FORMATS } from 'ng-pick-datetime';
 import 'hammerjs';
+
+export const MY_NATIVE_FORMATS = {
+  fullPickerInput: { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' },
+  datePickerInput: { day: 'numeric', month: 'numeric', year: 'numeric' },
+  timePickerInput: { hour: 'numeric', minute: 'numeric' },
+  monthYearLabel: { month: 'short', year: 'numeric' },
+  dateA11yLabel: { day: 'numeric', month: 'long', year: 'numeric' },
+  monthYearA11yLabel: { month: 'long', year: 'numeric' },
+};
+
 
 import { Config } from './utility/config';
 import { MapUtil } from './utility/maputil';
@@ -45,7 +55,12 @@ import { ReplayComponent } from './replay/replay.component';
     OwlDateTimeModule,
     OwlNativeDateTimeModule
   ],
-  providers: [Config, MapUtil, User, Location],
+  providers: [
+    { provide: OWL_DATE_TIME_FORMATS, useValue: MY_NATIVE_FORMATS },
+    Config,
+    MapUtil,
+    User,
+    Location],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
