@@ -8,8 +8,9 @@ export class MapUtil {
 
     public geo = {
         initMap: function () {
-            const map = L.map('map').setView([13.0234427, 80.16], 5);
-            L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png').addTo(map);
+            const map = L.map('map').setView([13.0234427, 80.16], 6);
+            L.tileLayer('https://mt.google.com/vt/style=feature:poi.business|visibility:off&x={x}&y={y}&z={z}').addTo(map);
+            // https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png
             return map;
         },
         bearing: function (lat1, lng1, lat2, lng2) {
@@ -68,10 +69,10 @@ export class MapUtil {
         mapIcon: function (transportType) {
             if (transportType === 'RUNNING') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/heading.png',
-                    iconSize: [20, 20],
-                    iconAnchor: [11, 24],
-                    popupAnchor: [1, -34],
+                    iconUrl: 'assets/img/red_dot.svg',
+                    iconSize: [65, 65],
+                    iconAnchor: [35, 35],
+                    popupAnchor: [1, 0],
                     shadowSize: [0, 0]
                 });
                 return icon;
@@ -88,17 +89,17 @@ export class MapUtil {
                 const icon = L.icon({
                     iconUrl: 'assets/img/orange_dot.png',
                     iconSize: [21, 29],
-                    iconAnchor: [15, 30],
+                    iconAnchor: [50, 30],
                     popupAnchor: [1, -34],
                     shadowSize: [0, 0]
                 });
                 return icon;
             } else if (transportType === 'DISCONNECT') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/red_dot.png',
-                    iconSize: [20, 20],
-                    iconAnchor: [15, 30],
-                    popupAnchor: [1, -34],
+                    iconUrl: 'assets/img/red_dot.svg',
+                    iconSize: [60, 60],
+                    iconAnchor: [10, 10],
+                    popupAnchor: [1, 0],
                     shadowSize: [0, 0]
                 });
                 return icon;

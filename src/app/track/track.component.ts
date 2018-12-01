@@ -99,9 +99,8 @@ export class TrackComponent implements OnInit {
           let icon;
           self.mapUtil.geo.clearMarker(self.marker, self.glob.map);
 
-          const disconnectDuration = self.mapUtil.geo.timeDiffrence(new Date().getTime(),
-            transports[0].time);
-          if (disconnectDuration >= 30) {
+          const disconnectDuration = self.mapUtil.geo.timeDiffrence(transports[0].time, new Date().getTime());
+          if (disconnectDuration >= 10) {
             self.track.speed = 0;
             self.track.statusCSS = 'dot-danger';
             self.track.status = 'Disconnected';
