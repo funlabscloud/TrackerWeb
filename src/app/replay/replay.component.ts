@@ -80,6 +80,7 @@ export class ReplayComponent implements OnInit {
     this.fireMovementHisRef.once('value').then(function (movementSnapshot) {
       const movementWaypoint = movementSnapshot.val();
       if (movementWaypoint !== null && movementWaypoint !== undefined) {
+
         Object.keys(movementWaypoint).map(function (index) {
           const movement = movementWaypoint[index];
 
@@ -98,6 +99,17 @@ export class ReplayComponent implements OnInit {
           self.previousPoint.lng = movement.lng;
           self.layerGroup = new L.featureGroup([self.polyLine]);
         });
+
+        // Start & End marker
+        const maxWaypoints = Object.keys(movementWaypoint).length;
+        const startPoint = Object.keys(movementWaypoint)[0];
+        const endPoint = Object.keys(movementWaypoint)[maxWaypoints - 1];
+        const iconStart = self.mapUtil.geo.mapIcon('START');
+        const iconEnd = self.mapUtil.geo.mapIcon('END');
+        self.marker = self.mapUtil.geo.marker(movementWaypoint[startPoint].lat,
+          movementWaypoint[startPoint].lng, iconStart, 0, self.glob.map, '', '');
+        self.mapUtil.geo.marker(movementWaypoint[endPoint].lat, movementWaypoint[endPoint].lng, iconEnd, 0, self.glob.map, '', '');
+        self.layerGroup = new L.featureGroup([self.marker]);
 
         // Find Parking
         const parked = self.mapUtil.geo.parkingFinder(movementWaypoint);
@@ -120,3 +132,4 @@ export class ReplayComponent implements OnInit {
     this.replayClosed.emit(true);
   }
 }
+

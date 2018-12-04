@@ -103,6 +103,24 @@ export class MapUtil {
                     shadowSize: [0, 0]
                 });
                 return icon;
+            } else if (transportType === 'START') {
+                const icon = L.icon({
+                    iconUrl: 'assets/img/pin_start.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [13, 29],
+                    popupAnchor: [0, 0],
+                    shadowSize: [0, 0]
+                });
+                return icon;
+            } else if (transportType === 'END') {
+                const icon = L.icon({
+                    iconUrl: 'assets/img/pin_end.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [11, 25],
+                    popupAnchor: [0, 0],
+                    shadowSize: [0, 0]
+                });
+                return icon;
             }
         },
         timeDiffrence: function (startDate, endDate) {
@@ -162,21 +180,26 @@ export class MapUtil {
             });
 
             // Eliminate parking duration < 5min
-            let parkedLen = parked.length;
+            const delParking = [];
             for (let itr = 0; itr <= parked.length - 1; itr++) {
                 if (parked[itr].duration < 5) {
-                    delete parked[itr];
-                    parkedLen = parkedLen - 1;
+                    delParking.push(itr);
+                }
+            }
+            if (delParking.length > 0) {
+                for (let itr = 0; itr <= delParking.length - 1; itr++) {
+                    parked.splice(itr, 1);
                 }
             }
 
             // Eliminate parking distance < 500m between two points
-            if (parkedLen > 1) {
+            if (parked.length > 1) {
                 Object.keys(parked).map(function (index) {
                     const p1 = { lat: parked[index].lat, lng: parked[index].lng };
                     const p2 = { lat: parked[index + 1].lat, lng: parked[index + 1].lng };
                 });
             }
+
             return parked;
         }
     };
