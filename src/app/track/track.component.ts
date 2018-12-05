@@ -61,9 +61,13 @@ export class TrackComponent implements OnInit {
       return;
     }
 
-    for (let itr = 0; itr <= this.glob.markers.length - 1; itr++) {
-      this.glob.map.removeLayer(this.glob.markers[itr]);
+    // Remove all layers
+    for (let itr = 0; itr <= self.glob.layers.length - 1; itr++) {
+      self.glob.map.removeLayer(self.glob.layers[itr]);
     }
+
+    this.glob.layers = [];
+    this.lastKnownPoint = { lat: '', lng: '' };
 
     this.fireMovementRef = firebase.database().ref('movement/' + this.glob.user.uId + '/' + this.transportId);
     this.onMovementListener();
@@ -97,27 +101,23 @@ export class TrackComponent implements OnInit {
           const transport = transports[0];
 
           let icon;
-          self.mapUtil.geo.clearMarker(self.marker, self.glob.map);
-
           const disconnectDuration = self.mapUtil.geo.timeDiffrence(transports[0].time, new Date().getTime());
           if (disconnectDuration >= 10) {
             self.track.speed = 0;
+            self.isParked = false;
+            self.parkingStart = undefined;
             self.track.statusCSS = 'dot-danger';
             self.track.status = 'Disconnected';
             icon = self.mapUtil.geo.mapIcon('DISCONNECT');
             self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
-            self.layerGroup = new L.featureGroup([self.marker]);
-            self.isParked = false;
-            self.parkingStart = undefined;
           } else {
             if (transport.motion === 'IDLE') {
+              self.isParked = false;
+              self.parkingStart = undefined;
               icon = self.mapUtil.geo.mapIcon('IDLE');
               self.track.status = 'IDLE';
               self.track.statusCSS = 'dot-facebook';
               self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
-              self.layerGroup = new L.featureGroup([self.marker]);
-              self.isParked = false;
-              self.parkingStart = undefined;
             } else if (transport.motion === 'PARKED') {
               if (self.parkingStart === undefined) {
                 self.parkingStart = new Date(transport.time);
@@ -128,7 +128,6 @@ export class TrackComponent implements OnInit {
               self.track.status = 'Parked';
               self.track.statusCSS = 'dot-warning';
               self.marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, 0, self.glob.map, '', '');
-              self.layerGroup = new L.featureGroup([self.marker]);
               setInterval(() => {
                 self.runningTime = new Date();
               }, 1000);
@@ -156,9 +155,10 @@ export class TrackComponent implements OnInit {
                 self.marker = self.mapUtil.geo.moveMarker(self.lastKnownPoint.lat, self.lastKnownPoint.lng, transport.lat,
                   transport.lng, icon, transport.bearing, self.glob.map, '', '');
               }
-              self.layerGroup = new L.featureGroup([self.polyLine]);
+              self.glob.layers.push(self.polyLine);
             }
           }
+          self.glob.layers.push(self.marker);
 
           self.lastKnownPoint.lat = transport.lat;
           self.lastKnownPoint.lng = transport.lng;
@@ -166,7 +166,6 @@ export class TrackComponent implements OnInit {
           transport.time = moment(transport.time).fromNow();
           self.track.battery = transport.power;
           self.track.reported = transport.time;
-          self.glob.map.fitBounds(self.layerGroup.getBounds());
 
           if (transport.power >= 0 && transport.power <= 20) {
             self.track.batteryCSS = 'badge-danger';
@@ -176,6 +175,10 @@ export class TrackComponent implements OnInit {
             self.track.batteryCSS = 'badge-success';
           }
           self.isTracking = true;
+
+          // Fit Bounds
+          self.layerGroup = new L.featureGroup(self.glob.layers);
+          self.glob.map.fitBounds(self.layerGroup.getBounds());
         });
       }
     });

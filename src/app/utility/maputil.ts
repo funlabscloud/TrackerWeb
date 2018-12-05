@@ -9,8 +9,11 @@ export class MapUtil {
     public geo = {
         initMap: function () {
             const map = L.map('map').setView([13.0234427, 80.16], 6);
-            L.tileLayer('https://mt.google.com/vt/style=feature:poi.business|visibility:off&x={x}&y={y}&z={z}').addTo(map);
-            // https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png
+            let tileLayer = L.tileLayer('https://mt.google.com/vt/x={x}&y={y}&z={z}').addTo(map);
+            tileLayer.on('tileerror', function (error, tile) {
+                map.removeLayer(tileLayer);
+                tileLayer = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png').addTo(map);
+            });
             return map;
         },
         bearing: function (lat1, lng1, lat2, lng2) {
@@ -38,9 +41,8 @@ export class MapUtil {
         },
         moveMarker: function (lat1, lng1, lat2, lng2, icon, bearing, map, id, html) {
             const marker = L.Marker.movingMarker([[lat1, lng1], [lat2, lng2]],
-                3000, { icon: icon, rotationAngle: bearing })
+                3000, { icon: icon, rotationAngle: bearing, autostart: true })
                 .addTo(map);
-            marker.start();
             marker['id'] = id;
             if (html !== '') {
                 marker.bindPopup(html);
@@ -180,27 +182,22 @@ export class MapUtil {
             });
 
             // Eliminate parking duration < 5min
-            const delParking = [];
+            const parking = [];
             for (let itr = 0; itr <= parked.length - 1; itr++) {
-                if (parked[itr].duration < 5) {
-                    delParking.push(itr);
-                }
-            }
-            if (delParking.length > 0) {
-                for (let itr = 0; itr <= delParking.length - 1; itr++) {
-                    parked.splice(itr, 1);
+                if (parked[itr].duration >= 5) {
+                    parking.push(parked[itr]);
                 }
             }
 
             // Eliminate parking distance < 500m between two points
-            if (parked.length > 1) {
-                Object.keys(parked).map(function (index) {
-                    const p1 = { lat: parked[index].lat, lng: parked[index].lng };
-                    const p2 = { lat: parked[index + 1].lat, lng: parked[index + 1].lng };
+            if (parking.length > 1) {
+                Object.keys(parking).map(function (index) {
+                    const p1 = { lat: parking[index].lat, lng: parking[index].lng };
+                    const p2 = { lat: parking[index + 1].lat, lng: parking[index + 1].lng };
                 });
             }
 
-            return parked;
+            return parking;
         }
     };
 }

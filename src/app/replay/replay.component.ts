@@ -62,9 +62,15 @@ export class ReplayComponent implements OnInit {
       return;
     }
 
-    for (let itr = 0; itr <= this.glob.markers.length - 1; itr++) {
-      this.glob.map.removeLayer(this.glob.markers[itr]);
+    this.snackBar.open(this.config.MSG_REPLAY_HISTORY, this.config.OK, { duration: this.config.SNACKBAR_EVER });
+
+    // Remove all layers
+    for (let itr = 0; itr <= self.glob.layers.length - 1; itr++) {
+      self.glob.map.removeLayer(self.glob.layers[itr]);
     }
+
+    this.glob.layers = [];
+    this.previousPoint = { lat: '', lng: '' };
 
     this.fireMovementHisRef = firebase.database()
       .ref('movement_history/' + this.glob.user.uId + '/' + this.transportId)
@@ -97,7 +103,7 @@ export class ReplayComponent implements OnInit {
           }
           self.previousPoint.lat = movement.lat;
           self.previousPoint.lng = movement.lng;
-          self.layerGroup = new L.featureGroup([self.polyLine]);
+          self.glob.layers.push(self.polyLine);
         });
 
         // Start & End marker
@@ -106,10 +112,12 @@ export class ReplayComponent implements OnInit {
         const endPoint = Object.keys(movementWaypoint)[maxWaypoints - 1];
         const iconStart = self.mapUtil.geo.mapIcon('START');
         const iconEnd = self.mapUtil.geo.mapIcon('END');
-        self.marker = self.mapUtil.geo.marker(movementWaypoint[startPoint].lat,
+        const startMarker = self.mapUtil.geo.marker(movementWaypoint[startPoint].lat,
           movementWaypoint[startPoint].lng, iconStart, 0, self.glob.map, '', '');
-        self.mapUtil.geo.marker(movementWaypoint[endPoint].lat, movementWaypoint[endPoint].lng, iconEnd, 0, self.glob.map, '', '');
-        self.layerGroup = new L.featureGroup([self.marker]);
+        const endMarker = self.mapUtil.geo.marker(movementWaypoint[endPoint].lat,
+          movementWaypoint[endPoint].lng, iconEnd, 0, self.glob.map, '', '');
+        self.glob.layers.push(startMarker);
+        self.glob.layers.push(endMarker);
 
         // Find Parking
         const parked = self.mapUtil.geo.parkingFinder(movementWaypoint);
@@ -117,14 +125,17 @@ export class ReplayComponent implements OnInit {
           for (let itr = 0; itr <= parked.length - 1; itr++) {
             const icon = self.mapUtil.geo.mapIcon('PARKED');
             self.marker = self.mapUtil.geo.marker(parked[itr].lat, parked[itr].lng, icon, 0, self.glob.map, '', '');
-            self.layerGroup = new L.featureGroup([self.marker]);
+            self.glob.layers.push(self.marker);
           }
         }
 
+        // Fit Bounds
+        self.layerGroup = new L.featureGroup(self.glob.layers);
         self.glob.map.fitBounds(self.layerGroup.getBounds());
       } else {
         self.snackBar.open(self.config.ERR_NO_DATA_FOUND, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
       }
+      self.snackBar.dismiss();
     });
   }
 

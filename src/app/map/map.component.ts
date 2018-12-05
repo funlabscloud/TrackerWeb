@@ -26,11 +26,11 @@ export class MapComponent implements OnInit {
   private myAllTransport = [];
   private sideBarOnly = 'sidebar-icon-only';
   private fireMovementRef;
-  private glob = {
+  private glob: any = {
     myAllTransport: [],
     map: {},
     user: {},
-    markers: []
+    layers: []
   };
 
   // window
@@ -51,6 +51,12 @@ export class MapComponent implements OnInit {
     this.localStorage.getItem<User>('user').subscribe((locUser: User) => {
       this.user = locUser;
       this.glob['user'] = locUser;
+
+      // Remove all layers
+      for (let itr = 0; itr <= this.glob.layers.length - 1; itr++) {
+        this.glob.map.removeLayer(this.glob.layers[itr]);
+      }
+
       this.fireMovementRef = firebase.database().ref('movement/' + this.user.uId);
       this.onMovementListener();
     });
@@ -119,22 +125,19 @@ export class MapComponent implements OnInit {
             icon = self.mapUtil.geo.mapIcon('RUNNING');
           }
 
-
           if (lat1 === '' || lng1 === '') {
             const marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, transport.bearing, self.map, id, 'helo');
-            self.glob.markers.push(marker);
+            self.glob.layers.push(marker);
           } else {
             if (transport.bearing === 0) {
               transport.bearing = self.mapUtil.geo.bearing(lat1, lng1, transport.lat, transport.lng);
             }
             const marker = self.mapUtil.geo.moveMarker(lat1, lng1, transport.lat,
               transport.lng, icon, transport.bearing, self.map, id, 'helo');
-            self.glob.markers.push(marker);
+            self.glob.layers.push(marker);
 
-            const group = new L.featureGroup(self.glob.markers);
-            setTimeout(() => {
-              self.map.fitBounds(group.getBounds());
-            }, 500);
+            const group = new L.featureGroup(self.glob.layers);
+            self.map.fitBounds(group.getBounds());
           }
         });
       }
