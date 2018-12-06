@@ -14,7 +14,6 @@ declare var moment: any;
 declare var firebase: any;
 declare let L;
 
-
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -24,13 +23,15 @@ export class MapComponent implements OnInit {
 
   private map;
   private myAllTransport = [];
+  private marker;
   private sideBarOnly = 'sidebar-icon-only';
   private fireMovementRef;
   private glob: any = {
     myAllTransport: [],
     map: {},
     user: {},
-    layers: []
+    layers: [],
+    transports: {}
   };
 
   // window
@@ -53,9 +54,7 @@ export class MapComponent implements OnInit {
       this.glob['user'] = locUser;
 
       // Remove all layers
-      for (let itr = 0; itr <= this.glob.layers.length - 1; itr++) {
-        this.glob.map.removeLayer(this.glob.layers[itr]);
-      }
+      this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
 
       this.fireMovementRef = firebase.database().ref('movement/' + this.user.uId);
       this.onMovementListener();
@@ -114,10 +113,6 @@ export class MapComponent implements OnInit {
             self.glob.myAllTransport.push(id);
           }
 
-          const oldMarker = self.mapUtil.geo.clearMarkerArray(id, self.glob.markers, self.map);
-          const lat1 = oldMarker._latlng.lat;
-          const lng1 = oldMarker._latlng.lng;
-
           let icon;
           if (transport.speed < 10) {
             icon = self.mapUtil.geo.mapIcon('IDLE');
@@ -125,21 +120,21 @@ export class MapComponent implements OnInit {
             icon = self.mapUtil.geo.mapIcon('RUNNING');
           }
 
-          if (lat1 === '' || lng1 === '') {
-            const marker = self.mapUtil.geo.marker(transport.lat, transport.lng, icon, transport.bearing, self.map, id, 'helo');
-            self.glob.layers.push(marker);
-          } else {
-            if (transport.bearing === 0) {
-              transport.bearing = self.mapUtil.geo.bearing(lat1, lng1, transport.lat, transport.lng);
-            }
-            const marker = self.mapUtil.geo.moveMarker(lat1, lng1, transport.lat,
+          self.marker = self.glob.transports[id];
+          if (self.marker === undefined) {
+            self.marker = self.mapUtil.geo.moveMarker(transport.lat, transport.lng, transport.lat,
               transport.lng, icon, transport.bearing, self.map, id, 'helo');
-            self.glob.layers.push(marker);
-
-            const group = new L.featureGroup(self.glob.layers);
-            self.map.fitBounds(group.getBounds());
+            self.glob.transports[id] = self.marker;
+          } else {
+            self.map.removeLayer(self.marker);
+            self.marker = self.mapUtil.geo.moveMarker(self.marker.getLatLng().lat, self.marker.getLatLng().lng, transport.lat,
+              transport.lng, icon, transport.bearing, self.map, id, 'helo');
+            self.glob.transports[id] = self.marker;
           }
+          self.glob.layers.push(self.marker);
         });
+        const group = new L.featureGroup(self.glob.layers);
+        self.map.fitBounds(group.getBounds());
       }
     });
   }

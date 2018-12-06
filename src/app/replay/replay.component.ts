@@ -65,9 +65,7 @@ export class ReplayComponent implements OnInit {
     this.snackBar.open(this.config.MSG_REPLAY_HISTORY, this.config.OK, { duration: this.config.SNACKBAR_EVER });
 
     // Remove all layers
-    for (let itr = 0; itr <= self.glob.layers.length - 1; itr++) {
-      self.glob.map.removeLayer(self.glob.layers[itr]);
-    }
+    this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
 
     this.glob.layers = [];
     this.previousPoint = { lat: '', lng: '' };

@@ -62,9 +62,7 @@ export class TrackComponent implements OnInit {
     }
 
     // Remove all layers
-    for (let itr = 0; itr <= self.glob.layers.length - 1; itr++) {
-      self.glob.map.removeLayer(self.glob.layers[itr]);
-    }
+    this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
 
     this.glob.layers = [];
     this.lastKnownPoint = { lat: '', lng: '' };
@@ -75,16 +73,14 @@ export class TrackComponent implements OnInit {
 
   onTrackEnd() {
     this.isTracking = false;
-    this.mapUtil.geo.clearMarker(this.marker, this.glob.map);
-    this.mapUtil.geo.clearMarker(this.polyLine, this.glob.map);
+    this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
     this.fireMovementRef.off('value');
     this.trackClosed.emit(true);
   }
 
   closeTrackWindow() {
     this.isTracking = false;
-    this.mapUtil.geo.clearMarker(this.marker, this.glob.map);
-    this.mapUtil.geo.clearMarker(this.polyLine, this.glob.map);
+    this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
     if (this.fireMovementRef !== undefined) {
       this.fireMovementRef.off('value');
     }
@@ -139,10 +135,6 @@ export class TrackComponent implements OnInit {
               self.track.speed = Math.round(transport.speed);
               icon = self.mapUtil.geo.mapIcon('RUNNING');
 
-              if (transport.bearing === 0) {
-                transport.bearing = self.mapUtil.geo.bearing(self.lastKnownPoint.lat,
-                  self.lastKnownPoint.lng, transport.lat, transport.lng);
-              }
               if (self.lastKnownPoint.lat === '' && self.lastKnownPoint.lng === '') {
                 const latlngs = [[transport.lat, transport.lng], [transport.lat, transport.lng]];
                 self.polyLine = L.polyline(latlngs, { color: 'green' }).addTo(self.glob.map);

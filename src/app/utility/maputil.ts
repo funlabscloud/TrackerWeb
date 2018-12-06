@@ -16,20 +16,6 @@ export class MapUtil {
             });
             return map;
         },
-        bearing: function (lat1, lng1, lat2, lng2) {
-            const dLon = this._toRad(lng2 - lng1);
-            const y = Math.sin(dLon) * Math.cos(this._toRad(lat2));
-            const x = Math.cos(this._toRad(lat1)) * Math.sin(this._toRad(lat2)) -
-                Math.sin(this._toRad(lat1)) * Math.cos(this._toRad(lat2)) * Math.cos(dLon);
-            const brng = this._toDeg(Math.atan2(y, x));
-            return ((brng + 360) % 360);
-        },
-        _toRad: function (deg) {
-            return deg * Math.PI / 180;
-        },
-        _toDeg: function (rad) {
-            return rad * 180 / Math.PI;
-        },
         marker: function (lat, lng, icon, bearing, map, id, html) {
             const marker = L.marker([lat, lng],
                 { icon: icon, rotationAngle: bearing }).addTo(map);
@@ -49,29 +35,15 @@ export class MapUtil {
             }
             return marker;
         },
-        clearMarker: function (marker, map) {
-            if (marker !== undefined) {
-                map.removeLayer(marker);
+        clearLayers: function (layers, map) {
+            for (let itr = 0; itr <= layers.length - 1; itr++) {
+                map.removeLayer(layers[itr]);
             }
-        },
-        clearMarkerArray: function (id, markers, map) {
-            if (markers.length > 0) {
-                for (let itr = 0; itr <= markers.length - 1; itr++) {
-                    const tempMarker = markers[itr];
-                    if (id === tempMarker.id) {
-                        map.removeLayer(tempMarker);
-                        markers.splice(itr, 1);
-                        return tempMarker;
-                    }
-                }
-            }
-            const marker: any = { _latlng: { lat: '', lng: '' } };
-            return marker;
         },
         mapIcon: function (transportType) {
             if (transportType === 'RUNNING') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/red_dot.svg',
+                    iconUrl: 'assets/img/car.svg',
                     iconSize: [65, 65],
                     iconAnchor: [35, 35],
                     popupAnchor: [1, 0],
@@ -89,19 +61,19 @@ export class MapUtil {
                 return icon;
             } else if (transportType === 'IDLE') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/orange_dot.png',
-                    iconSize: [21, 29],
-                    iconAnchor: [50, 30],
-                    popupAnchor: [1, -34],
+                    iconUrl: 'assets/img/idle.svg',
+                    iconSize: [65, 65],
+                    iconAnchor: [35, 35],
+                    popupAnchor: [1, 0],
                     shadowSize: [0, 0]
                 });
                 return icon;
             } else if (transportType === 'DISCONNECT') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/red_dot.svg',
-                    iconSize: [60, 60],
-                    iconAnchor: [10, 10],
-                    popupAnchor: [1, 0],
+                    iconUrl: 'assets/img/red_dot.png',
+                    iconSize: [20, 20],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [1, -34],
                     shadowSize: [0, 0]
                 });
                 return icon;
