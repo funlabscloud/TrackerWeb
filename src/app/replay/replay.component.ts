@@ -94,10 +94,11 @@ export class ReplayComponent implements OnInit {
           } else {
             latlngs = [[self.previousPoint.lat, self.previousPoint.lng], [movement.lat, movement.lng]];
           }
-          if (movement.speed < 10) {
+          if (movement.calspeed < 80) {
             self.polyLine = L.polyline(latlngs, { className: 'ployline_green' }).addTo(self.glob.map);
           } else {
-            self.polyLine = L.polyline(latlngs, { className: 'ployline_red' }).addTo(self.glob.map);
+            self.polyLine = L.polyline(latlngs, { className: 'ployline_red' }).
+              bindPopup('Speed ' + movement.calspeed + 'km/h').addTo(self.glob.map);
           }
           self.previousPoint.lat = movement.lat;
           self.previousPoint.lng = movement.lng;
@@ -130,14 +131,15 @@ export class ReplayComponent implements OnInit {
         // Fit Bounds
         self.layerGroup = new L.featureGroup(self.glob.layers);
         self.glob.map.fitBounds(self.layerGroup.getBounds());
+        self.snackBar.dismiss();
       } else {
         self.snackBar.open(self.config.ERR_NO_DATA_FOUND, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
       }
-      self.snackBar.dismiss();
     });
   }
 
   closeReplayWindow() {
+    this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
     this.replayClosed.emit(true);
   }
 }

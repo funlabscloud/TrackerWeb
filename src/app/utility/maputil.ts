@@ -43,7 +43,7 @@ export class MapUtil {
         mapIcon: function (transportType) {
             if (transportType === 'RUNNING') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/car.svg',
+                    iconUrl: 'assets/img/running.svg',
                     iconSize: [65, 65],
                     iconAnchor: [35, 35],
                     popupAnchor: [1, 0],
@@ -61,7 +61,7 @@ export class MapUtil {
                 return icon;
             } else if (transportType === 'IDLE') {
                 const icon = L.icon({
-                    iconUrl: 'assets/img/idle.svg',
+                    iconUrl: 'assets/img/running.svg',
                     iconSize: [65, 65],
                     iconAnchor: [35, 35],
                     popupAnchor: [1, 0],
@@ -160,15 +160,6 @@ export class MapUtil {
                     parking.push(parked[itr]);
                 }
             }
-
-            // Eliminate parking distance < 500m between two points
-            if (parking.length > 1) {
-                Object.keys(parking).map(function (index) {
-                    const p1 = { lat: parking[index].lat, lng: parking[index].lng };
-                    const p2 = { lat: parking[index + 1].lat, lng: parking[index + 1].lng };
-                });
-            }
-
             return parking;
         }
     };

@@ -82,6 +82,7 @@ export class MapComponent implements OnInit {
   onReplayClosed(closed: boolean) {
     if (closed) {
       this.replayWindow = false;
+      this.onMovementListener();
     } else {
       this.fireMovementRef.off('value');
     }
