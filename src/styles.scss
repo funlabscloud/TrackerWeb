@@ -8442,7 +8442,6 @@
  /* Navbar */
  .navbar.default-layout {
    font-family: "Poppins", sans-serif;
-   background: linear-gradient(120deg, #4da0ef, #61afe6, #73c3e8);
    transition: background 0.25s ease;
    -webkit-transition: background 0.25s ease;
    -moz-transition: background 0.25s ease;
@@ -12438,7 +12437,7 @@
      font-size: 0.9rem;
      margin-top: 0;
      position: absolute;
-     top: calc(63px - 6px);
+     top: calc(63px - 15px);
      right: 0;
      left: auto;
      border: 1px solid rgba(182, 182, 182, 0.1);
@@ -12447,6 +12446,7 @@
      border-radius: 2px;
      -webkit-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.13);
      box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.13);
+     border-radius: 10px;
      overflow: hidden; }
      .rtl .nav .nav-item.dropdown .navbar-dropdown, .rtl
      .navbar-nav .nav-item.dropdown .navbar-dropdown {
@@ -17596,4 +17596,9 @@ margin-top:11%;
   stroke: #f1683f;
    fill: none;  
    stroke-width: 5;  
+ }
+
+ .leaflet-top{
+  top: 80%;
+  left: 96%;
  }

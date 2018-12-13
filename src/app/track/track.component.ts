@@ -75,7 +75,6 @@ export class TrackComponent implements OnInit {
     this.isTracking = false;
     this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
     this.fireMovementRef.off('value');
-    this.trackClosed.emit(true);
   }
 
   closeTrackWindow() {
