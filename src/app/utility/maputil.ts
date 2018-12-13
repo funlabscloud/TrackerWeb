@@ -54,7 +54,7 @@ export class MapUtil {
                 const icon = L.icon({
                     iconUrl: 'assets/img/parking.svg',
                     iconSize: [25, 25],
-                    iconAnchor: [11, 24],
+                    iconAnchor: [7, 5],
                     popupAnchor: [1, -34],
                     shadowSize: [0, 0]
                 });
@@ -80,7 +80,7 @@ export class MapUtil {
             } else if (transportType === 'START') {
                 const icon = L.icon({
                     iconUrl: 'assets/img/pin_start.png',
-                    iconSize: [28, 28],
+                    iconSize: [24, 30],
                     iconAnchor: [13, 29],
                     popupAnchor: [0, 0],
                     shadowSize: [0, 0]
@@ -89,7 +89,7 @@ export class MapUtil {
             } else if (transportType === 'END') {
                 const icon = L.icon({
                     iconUrl: 'assets/img/pin_end.png',
-                    iconSize: [28, 28],
+                    iconSize: [24, 30],
                     iconAnchor: [11, 25],
                     popupAnchor: [0, 0],
                     shadowSize: [0, 0]

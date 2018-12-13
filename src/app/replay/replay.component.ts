@@ -122,8 +122,15 @@ export class ReplayComponent implements OnInit {
         const parked = self.mapUtil.geo.parkingFinder(movementWaypoint);
         if (parked.length > 0) {
           for (let itr = 0; itr <= parked.length - 1; itr++) {
+            const icon_blink = L.divIcon({
+              className: '',
+              iconSize: null,
+              html: '<span class="dot-indicator"><div style="position: relative;margin: 0px auto;" class="dot-facebook"></div></span>'
+            });
+            self.marker = self.mapUtil.geo.marker(parked[itr].lat, parked[itr].lng, icon_blink, 0, self.glob.map, '', '');
             const icon = self.mapUtil.geo.mapIcon('PARKED');
             self.marker = self.mapUtil.geo.marker(parked[itr].lat, parked[itr].lng, icon, 0, self.glob.map, '', '');
+
             self.glob.layers.push(self.marker);
           }
         }
