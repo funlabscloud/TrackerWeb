@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Config } from '../utility/config';
 import { MapUtil } from '../utility/maputil';
@@ -30,9 +31,12 @@ export class ReplayComponent implements OnInit {
 
   constructor(private config: Config,
     private snackBar: MatSnackBar,
-    private mapUtil: MapUtil) { }
+    private mapUtil: MapUtil,
+    private http: HttpClient) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
 
   transportSearch = (text$: Observable<string>) =>
     text$.pipe(
@@ -44,6 +48,8 @@ export class ReplayComponent implements OnInit {
 
   onReplay() {
     const self = this;
+    this.glob.layers = [];
+    this.previousPoint = { lat: '', lng: '' };
     this.replayClosed.emit(false);
     if (this.transportId === '' || this.transportId === undefined || this.transportId === null) {
       this.snackBar.open(this.config.ERR_TRANSPORT_ID_REQUIRED, this.config.OK, { duration: this.config.SNACKBAR_TIMEOUT });
@@ -67,9 +73,6 @@ export class ReplayComponent implements OnInit {
     // Remove all layers
     this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
 
-    this.glob.layers = [];
-    this.previousPoint = { lat: '', lng: '' };
-
     this.fireMovementHisRef = firebase.database()
       .ref('movement_history/' + this.glob.user.uId + '/' + this.transportId)
       .orderByChild('time')
@@ -85,7 +88,7 @@ export class ReplayComponent implements OnInit {
       const movementWaypoint = movementSnapshot.val();
       if (movementWaypoint !== null && movementWaypoint !== undefined) {
 
-        Object.keys(movementWaypoint).map(function (index) {
+        /*Object.keys(movementWaypoint).map(function (index) {
           const movement = movementWaypoint[index];
 
           let latlngs = {};
@@ -94,6 +97,7 @@ export class ReplayComponent implements OnInit {
           } else {
             latlngs = [[self.previousPoint.lat, self.previousPoint.lng], [movement.lat, movement.lng]];
           }
+
           if (movement.calspeed < 80) {
             self.polyLine = L.polyline(latlngs, { className: 'ployline_green' }).addTo(self.glob.map);
           } else {
@@ -103,12 +107,12 @@ export class ReplayComponent implements OnInit {
           self.previousPoint.lat = movement.lat;
           self.previousPoint.lng = movement.lng;
           self.glob.layers.push(self.polyLine);
-        });
+        });*/
 
         // Start & End marker
         const maxWaypoints = Object.keys(movementWaypoint).length;
-        const startPoint = Object.keys(movementWaypoint)[0];
-        const endPoint = Object.keys(movementWaypoint)[maxWaypoints - 1];
+        const startPoint: any = Object.keys(movementWaypoint)[0];
+        const endPoint: any = Object.keys(movementWaypoint)[maxWaypoints - 1];
         const iconStart = self.mapUtil.geo.mapIcon('START');
         const iconEnd = self.mapUtil.geo.mapIcon('END');
         const startMarker = self.mapUtil.geo.marker(movementWaypoint[startPoint].lat,
@@ -125,15 +129,88 @@ export class ReplayComponent implements OnInit {
             const icon_blink = L.divIcon({
               className: '',
               iconSize: null,
-              html: '<span class="dot-indicator"><div style="position: relative;margin: 0px auto;" class="dot-facebook"></div></span>'
+              html: '<span class="dot-indicator"><div style="position: relative;margin: 0px auto;" class="dot-warning"></div></span>'
             });
             self.marker = self.mapUtil.geo.marker(parked[itr].lat, parked[itr].lng, icon_blink, 0, self.glob.map, '', '');
+            self.glob.layers.push(self.marker);
             const icon = self.mapUtil.geo.mapIcon('PARKED');
             self.marker = self.mapUtil.geo.marker(parked[itr].lat, parked[itr].lng, icon, 0, self.glob.map, '', '');
 
             self.glob.layers.push(self.marker);
           }
         }
+
+        // Direction API call
+        let mapQuestDirApi = 'https://api.openrouteservice.org/directions?' +
+          'api_key=5b3ce3597851110001cf6248ab48c8e792414510a89922081cff3695&' +
+          'profile=driving-car&format=json&' +
+          'units=km&geometry=true&geometry_format=geojson&instructions=false' +
+          '&coordinates=';
+
+
+        Object.keys(movementWaypoint).map(function (index) {
+          const movement = movementWaypoint[index];
+          mapQuestDirApi = mapQuestDirApi + movement.lng + ',' + movement.lat + '|';
+        });
+
+        mapQuestDirApi = mapQuestDirApi.substring(0, mapQuestDirApi.length - 2);
+
+        self.getMapQuestDirection(mapQuestDirApi)
+          .subscribe((d: any) => {
+            for (let itr = 0; itr <= d.routes[0].geometry.coordinates.length - 1; itr++) {
+
+              const lat = d.routes[0].geometry.coordinates[itr][1];
+              const lng = d.routes[0].geometry.coordinates[itr][0];
+              let latlngs = {};
+              if (self.previousPoint.lat === '' && self.previousPoint.lng === '') {
+                latlngs = [[lat, lng],
+                [lat, lng]];
+              } else {
+                latlngs = [[self.previousPoint.lat, self.previousPoint.lng],
+                [lat, lng]];
+              }
+
+              self.polyLine = L.polyline(latlngs, { className: 'ployline_green' }).addTo(self.glob.map);
+              self.previousPoint.lat = lat;
+              self.previousPoint.lng = lng;
+              self.glob.layers.push(self.polyLine);
+            }
+          });
+
+        /*if (maxWaypoints > 2) {
+          const wayPoints = [];
+          let maxPoints = 7;
+          let direction = 0;
+
+          const directionService = new google.maps.DirectionsService();
+          const src = new google.maps.LatLng(startPoint.lat, startPoint.lng);
+          const dest = new google.maps.LatLng(endPoint.lat, endPoint.lng);
+
+          Object.keys(movementWaypoint).map(function (index) {
+            if (maxPoints > 0 && direction % 5 === 0) {
+              const movement = movementWaypoint[index];
+              wayPoints.push({
+                location: { lat: movement.lat, lng: movement.lng },
+                stopover: true
+              });
+              maxPoints = maxPoints - 1;
+            }
+            direction = direction + 1;
+          });
+
+          directionService.route({
+            origin: src,
+            destination: dest,
+            optimizeWaypoints: true,
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+          }, function (result, status) {
+            if (status === google.maps.DirectionsStatus.OK) {
+              for (let itr = 0, len = result.routes[0].overview_path.length; itr < len; itr++) {
+                self.polyLine.push(result.routes[0].overview_path[itr]);
+              }
+            }
+          });
+        }*/
 
         // Fit Bounds
         self.layerGroup = new L.featureGroup(self.glob.layers);
@@ -148,6 +225,10 @@ export class ReplayComponent implements OnInit {
   closeReplayWindow() {
     this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
     this.replayClosed.emit(true);
+  }
+
+  getMapQuestDirection(url) {
+    return this.http.get(url);
   }
 }
 

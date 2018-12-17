@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     const config = {
-      apiKey: 'AIzaSyDoatNDu3HIw8J1Lnvjf94pGrBF4DLe51o',
+      apiKey: 'AIzaSyDIZeEZcfjzjjqYtGvPsnQBk3U3E0Sx19o',
       authDomain: 'myassettracks.firebaseapp.com',
       databaseURL: 'https://myassettracks.firebaseio.com',
       projectId: 'myassettracks',

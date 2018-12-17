@@ -6,32 +6,29 @@
         <ul class="nav" style="position: relative;top: 8%;">
           <li class="nav-item">
             <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
-              <img src="assets/img/tracking.svg" style="width: 26pt;" /><br />
-              <span style="font-size: 8pt;font-weight: 500;">Track</span>
+              <i class="mdi mdi-truck" style="font-size: 14pt;"></i><br />
+              <span style="font-size: 8pt;font-weight: 500;margin-left: -6px;">Track</span>
               <hr />
             </a>
           </li>
-          <li class="nav-item"><br /></li>
           <li class="nav-item">
             <a class="nav-link" style="cursor: pointer;" (click)="showReplayWindow();">
-              <img src="assets/img/replay.svg" style="width: 26pt;" /><br />
-              <span style="font-size: 8pt;font-weight: 500;">History</span>
+              <i class="mdi mdi-history" style="font-size: 14pt;"></i><br />
+              <span style="font-size: 8pt;font-weight: 500;margin-left: -8px;">History</span>
               <hr />
             </a>
           </li>
-          <li class="nav-item"><br /></li>
           <li class="nav-item">
             <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
-              <img src="assets/img/nearby.svg" style="width: 26pt;" /><br />
-              <span style="font-size: 8pt;font-weight: 500;">Near By</span>
+              <i class="mdi mdi-google-nearby" style="font-size: 14pt;"></i><br />
+              <span style="font-size: 8pt;font-weight: 500;margin-left: -8px;">Near By</span>
               <hr />
             </a>
           </li>
-          <li class="nav-item"><br /></li>
           <li class="nav-item">
             <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
-              <img src="assets/img/fence.svg" style="width: 26pt;" /><br />
-              <span style="font-size: 8pt;font-weight: 500;">Geo fence</span>
+              <i class="mdi mdi-gate" style="font-size: 14pt;"></i><br />
+              <span style="font-size: 8pt;font-weight: 500;margin-left: -16px;">Geo fence</span>
               <hr />
             </a>
           </li>
@@ -41,7 +38,7 @@
       <div class="main-panel">
         <div class="content-wrapper" style="padding:0">
           <div id="map" style="height:-webkit-fill-available;width:100%">
-            <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style="z-index: 500;">
               <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
                 <a class="navbar-brand brand-logo" href="#">
                   <img src="assets/img/logo.png" alt="logo"> </a>
@@ -50,6 +47,42 @@
               </div>
               <div class="navbar-menu-wrapper d-flex align-items-center">
                 <ul class="navbar-nav navbar-nav-right" style="background: linear-gradient(120deg, #ffffff, #ffffff, #ffffff);border-radius: 89px;color: black;">
+                  <!--<li class="nav-item dropdown">
+                    <div class="badge badge-pill badge-success">
+                      <i class="mdi mdi-access-point mr-2"></i>23</div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <div class="badge badge-pill badge-warning">
+                      <i class="mdi mdi-parking mr-2"></i>2</div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <div class="badge badge-pill badge-danger">
+                      <i class="mdi mdi-power-plug-off mr-2"></i>11</div>
+                  </li>-->
+                  <!--<li class="nav-item dropdown">
+                    <div class="badge badge-pill badge-success" data-toggle="tooltip" data-placement="bottom" title="Running"
+                      data-original-title="Running">23 R</div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <div class="badge badge-pill badge-warning" data-toggle="tooltip" data-placement="bottom" title="Parked"
+                      data-original-title="Parked">2 P</div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <div class="badge badge-pill badge-danger" data-toggle="tooltip" data-placement="bottom" title="Disconnected"
+                      data-original-title="Disconnected">11 D</div>
+                  </li>-->
+                  <li class="nav-item dropdown">
+                    <div class="badge badge-success" data-toggle="tooltip" data-placement="bottom" title="Running"
+                      data-original-title="Running">23 Running</div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <div class="badge badge-warning" data-toggle="tooltip" data-placement="bottom" title="Parked"
+                      data-original-title="Parked">2 Parked</div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <div class="badge badge-danger" data-toggle="tooltip" data-placement="bottom" title="Disconnected"
+                      data-original-title="Disconnected">11 Disconnected</div>
+                  </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown"
                       aria-expanded="false">

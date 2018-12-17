@@ -62,5 +62,5 @@ export class Config {
   ERR_DATE_RANGE_FROM_REQUIRED = 'From date required';
   ERR_DATE_RANGE_TO_REQUIRED = 'To date required';
   ERR_NO_DATA_FOUND = 'No data found';
-  MSG_REPLAY_HISTORY = 'Fetching routes';
+  MSG_REPLAY_HISTORY = 'Fetching travelled history..';
 }
