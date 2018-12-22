@@ -5,9 +5,9 @@ import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Config } from '../utility/config';
 import { MapUtil } from '../utility/maputil';
+import { AnimationStyleMetadata } from '@angular/animations';
 
 declare var firebase: any;
-declare var moment: any;
 declare let L;
 
 @Component({
@@ -28,6 +28,7 @@ export class ReplayComponent implements OnInit {
   private isTrailing = false;
   private fireMovementHisRef;
   private previousPoint = { lat: '', lng: '' };
+  private historyInfo = { parked: '-', speed: '-', disconnect: '-', maxSpeed: '-', distance: '-' };
 
   constructor(private config: Config,
     private snackBar: MatSnackBar,
@@ -44,8 +45,8 @@ export class ReplayComponent implements OnInit {
         : this.glob.myAllTransport.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
 
-  onReplay() {
-    const self = this;
+  onGetHistory() {
+    this.isTrailing = false;
     this.previousPoint = { lat: '', lng: '' };
     this.replayClosed.emit(false);
     if (this.transportId === '' || this.transportId === undefined || this.transportId === null) {
@@ -65,7 +66,7 @@ export class ReplayComponent implements OnInit {
       return;
     }
 
-    this.snackBar.open(this.config.MSG_REPLAY_HISTORY, this.config.OK, { duration: this.config.SNACKBAR_EVER });
+    this.snackBar.open(this.config.MSG_REPLAY_HISTORY, this.config.EMPTY, { duration: this.config.SNACKBAR_EVER });
 
     // Remove all layers
     this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
@@ -85,7 +86,7 @@ export class ReplayComponent implements OnInit {
       const movementWaypoint = movementSnapshot.val();
       if (movementWaypoint !== null && movementWaypoint !== undefined) {
 
-        Object.keys(movementWaypoint).map(function (index) {
+        Object.keys(movementWaypoint).forEach(function (index) {
           const movement = movementWaypoint[index];
 
           let latlngs = {};
@@ -135,12 +136,20 @@ export class ReplayComponent implements OnInit {
 
             self.glob.layers.push(self.marker);
           }
+          self.historyInfo.parked = parked.length.toString();
+        }
+
+        const overSpeeds: any = self.mapUtil.geo.overSpeedFinder(movementWaypoint);
+        if (overSpeeds.length > 0) {
+          self.historyInfo.speed = overSpeeds.length.toString();
+          self.historyInfo.maxSpeed = Math.max.apply(null, overSpeeds.speed).toFixed(0) + ' Km/h';
         }
 
         // Fit Bounds
         self.layerGroup = new L.featureGroup(self.glob.layers);
         self.glob.map.fitBounds(self.layerGroup.getBounds());
         self.snackBar.dismiss();
+        self.isTrailing = true;
       } else {
         self.snackBar.open(self.config.ERR_NO_DATA_FOUND, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
       }

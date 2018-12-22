@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
-import { LocalStorage } from '@ngx-pwa/local-storage';
 
 import { User } from '../model/User';
 import { Config } from '../utility/config';
@@ -19,7 +18,6 @@ export class AuthComponent implements OnInit {
   constructor(public snackBar: MatSnackBar,
     private config: Config,
     private router: Router,
-    private localStorage: LocalStorage,
     private user: User
   ) { }
 
@@ -71,7 +69,7 @@ export class AuthComponent implements OnInit {
 
         // Setting user to local storage
         self.user.uId = currentUser.uid;
-        self.localStorage.setItem('user', self.user).subscribe(() => { });
+        localStorage.setItem('user', JSON.stringify(self.user));
       })
       .catch(function (error) {
         self.snackBar.open(error.message, self.config.OK, { duration: self.config.SNACKBAR_TIMEOUT });
@@ -99,7 +97,7 @@ export class AuthComponent implements OnInit {
           self.user.email = res.user.email;
           self.user.userName = res.user.displayName;
           self.user.password = '';
-          self.localStorage.setItem('user', self.user).subscribe(() => { });
+          localStorage.setItem('user', JSON.stringify(self.user));
           self.router.navigate([self.config.URL_HOME]);
         } else {
           self.page = 'verify';

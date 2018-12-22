@@ -63,4 +63,5 @@ export class Config {
   ERR_DATE_RANGE_TO_REQUIRED = 'To date required';
   ERR_NO_DATA_FOUND = 'No data found';
   MSG_REPLAY_HISTORY = 'Fetching travelled history..';
+  MSG_PLS_WAIT = 'Please wait..';
 }

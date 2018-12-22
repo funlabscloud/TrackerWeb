@@ -28,45 +28,46 @@
         <owl-date-time #dt2 [hour12Timer]="true"></owl-date-time>
       </div>
 
-      <button style="margin: 19px 0px 10px 0px;" class="add btn btn-success btn-rounded font-weight-medium todo-list-add-btn"
+      <button style="margin: 19px 0px 10px 0px;font-size: 9pt;" class="add btn btn-primary btn-rounded font-weight-medium todo-list-add-btn"
+        (click)="onGetHistory()">Get History</button>&nbsp;&nbsp;&nbsp;
+      <button style="margin: 19px 0px 10px 0px;font-size: 9pt;" class="add btn btn-success btn-rounded font-weight-medium todo-list-add-btn"
         (click)="onReplay()">Replay</button>
-      <div class="d-flex justify-content-between border-top mt-2 pt-3">
+      <div class="d-flex justify-content-between border-top mt-2 pt-3" *ngIf="isTrailing">
         <div class="d-flex">
           <div class="dot-indicator bg-warning mt-1 mr-2"></div>
           <div class="d-flex flex-column">
             <p class="mb-2" style="font-size: 9pt;">Parked</p>
-            <small class="text-gray" style="text-align: center;font-size: 14pt;font-weight: 500;color: black;">3</small>
+            <small class="text-gray" style="text-align: center;font-size: 14pt;font-weight: 500;color: black;">{{historyInfo.parked}}</small>
           </div>
         </div>
         <div class="d-flex">
           <div class="dot-indicator mt-1 mr-2" style="background-color: #d82e2e;"></div>
           <div class="d-flex flex-column">
             <p class="mb-2" style="font-size: 9pt;">Speed</p>
-            <small class="text-gray" style="text-align: center;font-size: 14pt;font-weight: 500;color: black;">7</small>
+            <small class="text-gray" style="text-align: center;font-size: 14pt;font-weight: 500;color: black;">{{historyInfo.speed}}</small>
           </div>
         </div>
         <div class="d-flex">
           <div class="dot-indicator bg-danger mt-1 mr-2"></div>
           <div class="d-flex flex-column">
             <p class="mb-2" style="font-size: 9pt;">Disconnect</p>
-            <small class="text-gray" style="text-align: center;font-size: 14pt;font-weight: 500;color: black;">4</small>
+            <small class="text-gray" style="text-align: center;font-size: 14pt;font-weight: 500;color: black;">{{historyInfo.disconnect}}</small>
           </div>
         </div>
       </div>
-      <div class="d-flex justify-content-between border-top mt-2 pt-3">
+      <div class="d-flex justify-content-between border-top mt-2 pt-3" *ngIf="isTrailing">
         <div class="d-flex">
           <div class="mt-0 mr-2"><i class="mdi mdi-speedometer" style="font-size: 13pt;color: #d4462d;position: relative;bottom: 7%;"></i></div>
           <div class="d-flex flex-column">
             <p class="mb-2" style="font-size: 9pt;">Max Speed</p>
-            <small class="text-gray" style="text-align: center;font-size: 11pt;font-weight: 500;color: black;">95
-              Km/h</small>
+            <small class="text-gray" style="text-align: center;font-size: 11pt;font-weight: 500;color: black;">{{historyInfo.maxSpeed}}</small>
           </div>
         </div>
         <div class="d-flex">
           <div class="mt-0 mr-2"><i class="mdi mdi-road-variant" style="font-size: 13pt;color: #434246;position: relative;bottom: 7%;"></i></div>
           <div class="d-flex flex-column">
             <p class="mb-2" style="font-size: 9pt;">Distance Covered</p>
-            <small class="text-gray" style="text-align: center;font-size: 11pt;font-weight: 500;color: black;">23km</small>
+            <small class="text-gray" style="text-align: center;font-size: 11pt;font-weight: 500;color: black;">{{historyInfo.distance}}</small>
           </div>
         </div>
       </div>

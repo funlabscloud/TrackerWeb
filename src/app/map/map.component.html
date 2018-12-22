@@ -5,28 +5,28 @@
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav" style="position: relative;top: 8%;">
           <li class="nav-item">
-            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+            <a class="nav-link" style="cursor: pointer;color:#034267;" (click)="showTrackWindow();">
               <i class="mdi mdi-truck" style="font-size: 14pt;"></i><br />
               <span style="font-size: 8pt;font-weight: 500;margin-left: -6px;">Track</span>
               <hr />
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" style="cursor: pointer;" (click)="showReplayWindow();">
+            <a class="nav-link" style="cursor: pointer;color:#034267;" (click)="showReplayWindow();">
               <i class="mdi mdi-history" style="font-size: 14pt;"></i><br />
               <span style="font-size: 8pt;font-weight: 500;margin-left: -8px;">History</span>
               <hr />
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+            <a class="nav-link" style="cursor: pointer;color:#034267;" (click)="showTrackWindow();">
               <i class="mdi mdi-google-nearby" style="font-size: 14pt;"></i><br />
               <span style="font-size: 8pt;font-weight: 500;margin-left: -8px;">Near By</span>
               <hr />
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" style="cursor: pointer;" (click)="showTrackWindow();">
+            <a class="nav-link" style="cursor: pointer;color:#034267;" (click)="showTrackWindow();">
               <i class="mdi mdi-gate" style="font-size: 14pt;"></i><br />
               <span style="font-size: 8pt;font-weight: 500;margin-left: -16px;">Geo fence</span>
               <hr />
@@ -167,7 +167,7 @@
                   </li>
                   <li class="nav-item dropdown d-none d-xl-inline-block">
                     <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-                      <span class="profile-text">Richard V.Welsh !</span>
+                      <span class="profile-text">{{user.userName}} !</span>
                       <img class="img-xs rounded-circle" src="assets/img/face.jpg" alt="Profile image"> </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                       <a class="dropdown-item p-0">

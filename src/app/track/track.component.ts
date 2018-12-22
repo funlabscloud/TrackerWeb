@@ -54,7 +54,6 @@ export class TrackComponent implements OnInit {
     )
 
   onTrack() {
-    const self = this;
     this.trackClosed.emit(false);
     if (this.transportId === this.config.EMPTY) {
       this.snackBar.open(this.config.ERR_TRANSPORT_ID_REQUIRED, this.config.OK, { duration: this.config.SNACKBAR_TIMEOUT });
@@ -89,10 +88,14 @@ export class TrackComponent implements OnInit {
   onMovementListener() {
     const self = this;
 
+    setTimeout(() => {
+      self.snackBar.open(self.config.MSG_PLS_WAIT, self.config.EMPTY, { duration: self.config.SNACKBAR_EVER });
+    });
+
     self.fireMovementRef.on('value', function (data) {
       const transports = data.val();
       if (transports !== null && transports !== undefined) {
-        Object.keys(transports).map(function (index) {
+        Object.keys(transports).forEach(function (index) {
           const transport = transports[0];
 
           let icon;
@@ -172,6 +175,7 @@ export class TrackComponent implements OnInit {
           self.glob.map.fitBounds(self.layerGroup.getBounds());
         });
       }
+      self.snackBar.dismiss();
     });
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalStorage } from '@ngx-pwa/local-storage';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 
 import { User } from '../model/User';
 import { Config } from '../utility/config';
@@ -20,10 +20,8 @@ declare let L;
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-
-  private map;
-  private myAllTransport = [];
   private marker;
+  private myAllTransport = [];
   private sideBarOnly = 'sidebar-icon-only';
   private fireMovementRef;
   private glob: any = {
@@ -38,27 +36,22 @@ export class MapComponent implements OnInit {
   private trackWindow = false;
   private replayWindow = false;
 
-  constructor(protected localStorage: LocalStorage,
+  constructor(public snackBar: MatSnackBar,
     private router: Router,
     private config: Config,
-    private user: User,
     private location: Location,
+    private user: User,
     private mapUtil: MapUtil) { }
 
   ngOnInit() {
-    this.map = this.mapUtil.geo.initMap();
-    this.glob['map'] = this.map;
+    this.glob['map'] = this.mapUtil.geo.initMap();
+    this.glob['user'] = JSON.parse(localStorage.getItem('user'));
+    this.user = this.glob['user'];
+    // Remove all layers
+    this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
 
-    this.localStorage.getItem<User>('user').subscribe((locUser: User) => {
-      this.user = locUser;
-      this.glob['user'] = locUser;
-
-      // Remove all layers
-      this.mapUtil.geo.clearLayers(this.glob.layers, this.glob.map);
-
-      this.fireMovementRef = firebase.database().ref('movement/' + this.user.uId);
-      this.onMovementListener();
-    });
+    this.fireMovementRef = firebase.database().ref('movement/' + this.glob['user'].uId);
+    this.onMovementListener();
   }
 
   showTrackWindow() {
@@ -91,7 +84,7 @@ export class MapComponent implements OnInit {
   onSignout() {
     const self = this;
     firebase.auth().signOut().then(function () {
-      self.localStorage.clear().subscribe(() => { });
+      localStorage.clear();
       self.router.navigate([self.config.URL_MAIN]);
     }, function (error) {
       console.log(error);
@@ -101,10 +94,14 @@ export class MapComponent implements OnInit {
   onMovementListener() {
     const self = this;
 
+    setTimeout(() => {
+      self.snackBar.open(self.config.MSG_PLS_WAIT, self.config.EMPTY, { duration: self.config.SNACKBAR_EVER });
+    });
+
     self.fireMovementRef.on('value', function (data) {
       const transports = data.val();
       if (transports !== null && transports !== undefined) {
-        Object.keys(transports).map(function (id) {
+        Object.keys(transports).forEach(function (id) {
           const transport = transports[id][0];
           transport.id = id;
           transport.power = Math.round(transport.power);
@@ -124,19 +121,21 @@ export class MapComponent implements OnInit {
           self.marker = self.glob.transports[id];
           if (self.marker === undefined) {
             self.marker = self.mapUtil.geo.moveMarker(transport.lat, transport.lng, transport.lat,
-              transport.lng, icon, transport.bearing, self.map, id, 'helo');
+              transport.lng, icon, transport.bearing, self.glob['map'], id, 'helo');
             self.glob.transports[id] = self.marker;
           } else {
-            self.map.removeLayer(self.marker);
+            self.glob['map'].removeLayer(self.marker);
             self.marker = self.mapUtil.geo.moveMarker(self.marker.getLatLng().lat, self.marker.getLatLng().lng, transport.lat,
-              transport.lng, icon, transport.bearing, self.map, id, 'helo');
+              transport.lng, icon, transport.bearing, self.glob['map'], id, 'helo');
             self.glob.transports[id] = self.marker;
           }
+
           self.glob.layers.push(self.marker);
         });
         const group = new L.featureGroup(self.glob.layers);
-        self.map.fitBounds(group.getBounds());
+        self.glob['map'].fitBounds(group.getBounds());
       }
+      self.snackBar.dismiss();
     });
   }
 }

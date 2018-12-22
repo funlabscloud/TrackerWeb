@@ -122,8 +122,8 @@ export class MapUtil {
             let park = { lat: '', lng: '', location: '', start: '', end: '', duration: '', power: '' };
             const totalPoints = points.length;
             const parked = [];
-            Object.keys(points).map(function (index) {
-                let itr = 1;
+            let itr = 1;
+            Object.keys(points).forEach(function (index) {
                 const point = points[index];
                 if (point.motion === 'PARKED') {
                     if (park.start === '') {
@@ -150,17 +150,50 @@ export class MapUtil {
                         park = { lat: '', lng: '', location: '', start: '', end: '', duration: '', power: '' };
                     }
                 }
-                itr++;
+                itr = itr + 1;
             });
 
             // Eliminate parking duration < 5min
             const parking = [];
-            for (let itr = 0; itr <= parked.length - 1; itr++) {
-                if (parked[itr].duration >= 5) {
-                    parking.push(parked[itr]);
+            for (let loop = 0; loop <= parked.length - 1; loop++) {
+                if (parked[loop].duration >= 5) {
+                    parking.push(parked[loop]);
                 }
             }
             return parking;
+        },
+        overSpeedFinder: function (points) {
+            const self = this;
+            let flag = true;
+            let startTime;
+            let speedObj = { lat: '', lng: '', location: '', speed: '', duration: '', power: '' };
+            const overSpeeds = [];
+            Object.keys(points).forEach(function (index) {
+                if (points[index].calspeed >= 80) {
+                    if (flag) {
+                        startTime = points[index].time;
+                        flag = false;
+                    } else {
+                        speedObj = { lat: '', lng: '', location: '', speed: '', duration: '', power: '' };
+                        speedObj.lat = points[index].lat;
+                        speedObj.lng = points[index].lng;
+                        speedObj.location = points[index].location;
+                        speedObj.speed = points[index].calspeed;
+                        speedObj.power = points[index].power;
+                        speedObj.duration = self.timeDiffrence(startTime, points[index].time);
+                        overSpeeds.push(speedObj);
+                        flag = true;
+                    }
+                }
+            });
+            // Get speed duration > 5min
+            const overSpeed = [];
+            for (let loop = 0; loop <= overSpeeds.length - 1; loop++) {
+                if (overSpeeds[loop].duration >= 5) {
+                    overSpeed.push(overSpeeds[loop]);
+                }
+            }
+            return overSpeed;
         }
     };
 }
